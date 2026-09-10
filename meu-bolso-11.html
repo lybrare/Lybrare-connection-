@@ -1,0 +1,2183 @@
+<!DOCTYPE html>
+<html lang="pt-MZ">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0a0d12">
+<title>Meu Bolso — Gestão Financeira</title>
+<meta name="description" content="Quem domina o seu bolso, cresce mais rápido. Micro SaaS de gestão financeira pessoal para Moçambique.">
+<link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTWV1IEJvbHNvIiwic2hvcnRfbmFtZSI6Ik1ldSBCb2xzbyIsInN0YXJ0X3VybCI6Ii4iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMGEwZDEyIiwidGhlbWVfY29sb3IiOiIjMGEwZDEyIn0=">
+<style>
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #0a0d12;
+  color: #f0f2f5;
+  padding-bottom: 78px;
+}
+#app.fundo-perfil { background: #0a0d12; }
+
+.topo {
+  background: linear-gradient(135deg, #05070a, #0b3d91);
+  color: white;
+  padding: 16px 16px 20px;
+  border-bottom: 1px solid #142032;
+}
+.linha-topo { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+.avatar-mini {
+  width: 40px; height: 40px; border-radius: 50%;
+  background: #1462d4; color: white; font-weight: 700; font-size: 13px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.saudacao { flex: 1; font-size: 17px; font-weight: 700; }
+.icones-topo { display: flex; gap: 4px; }
+.icone-btn { background: none; border: none; color: white; padding: 6px; cursor: pointer; }
+.titulo-secao { font-size: 20px; font-weight: 700; color: white; }
+
+.card-saldo-topo {
+  background: #12161d;
+  border: 1px solid #1e2530;
+  border-radius: 14px;
+  padding: 14px 16px;
+}
+.card-saldo-topo .label { color: #9fb4d8; font-size: 13px; }
+.linha-valor-saldo { display: flex; align-items: center; justify-content: space-between; }
+.linha-valor-saldo .icone-btn { color: #6fa2ff; }
+.valor-grande { font-size: 26px; font-weight: 700; margin-top: 2px; color: #4f8cff; }
+
+.mini-nav-mes { display: flex; align-items: center; gap: 6px; color: #cfe0ff; font-size: 14px; }
+.seta-mes { background: none; border: none; color: #cfe0ff; font-size: 18px; cursor: pointer; padding: 2px 6px; }
+.mes-label { min-width: 64px; text-align: center; }
+
+.conteudo { padding: 14px; max-width: 560px; margin: 0 auto; }
+h3 { margin: 18px 0 8px; font-size: 15px; color: #8fb4ff; }
+
+.nav-mes { display: flex; align-items: center; justify-content: center; gap: 14px; margin-bottom: 14px; }
+.mes-label-grande { font-size: 17px; font-weight: 700; color: #f0f2f5; text-transform: capitalize; }
+.nav-mes .seta-mes { font-size: 22px; color: #6fa2ff; }
+
+.linha-stats { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 6px; }
+.stat-card {
+  background: #12161d;
+  border: 1px solid #1e2530;
+  border-radius: 14px;
+  padding: 14px;
+  min-width: 130px;
+  flex-shrink: 0;
+}
+.stat-icone {
+  width: 34px; height: 34px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 15px; margin-bottom: 8px;
+}
+.stat-azul { background: rgba(79,140,255,0.18); color: #4f8cff; }
+.stat-vermelho { background: rgba(239,68,68,0.18); color: #ef4444; }
+.stat-verde { background: rgba(33,197,93,0.18); color: #21c55d; }
+.stat-label { font-size: 12px; color: #8792a8; }
+.stat-valor { font-size: 14px; font-weight: 700; color: #f0f2f5; margin-top: 2px; }
+
+.card {
+  background: #12161d;
+  border: 1px solid #1e2530;
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.card-insights { border-color: #1462d4; position: relative; cursor: pointer; }
+.badge-premium {
+  position: absolute; top: 12px; right: 12px;
+  background: #f7a500; color: #241900; font-size: 11px; font-weight: 700;
+  padding: 3px 9px; border-radius: 20px;
+}
+.insights-titulo { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
+.tag-ia { background: #1462d4; color: white; font-size: 11px; padding: 2px 8px; border-radius: 10px; }
+
+.cabecalho-secao { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; }
+.cabecalho-secao h3 { margin: 0; font-size: 15px; }
+.btn-mais {
+  width: 30px; height: 30px; border-radius: 8px;
+  background: #182231; color: #6fa2ff; border: 1px solid #24344d;
+  font-size: 17px; line-height: 1; cursor: pointer;
+}
+
+.lista-contas { display: flex; flex-direction: column; gap: 8px; margin-bottom: 6px; }
+.conta-item {
+  background: #12161d;
+  border: 1px solid #1e2530;
+  border-radius: 12px;
+  padding: 10px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.conta-icone {
+  width: 40px; height: 40px; border-radius: 10px;
+  color: white; font-weight: 700; font-size: 11px;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.cartao-badge {
+  padding: 6px 8px; border-radius: 6px; color: white;
+  font-weight: 700; font-size: 10px; letter-spacing: 0.3px; flex-shrink: 0;
+}
+.conta-meio { flex: 1; }
+.conta-nome { font-weight: 600; font-size: 14px; color: #f0f2f5; }
+.conta-tipo { font-size: 12px; color: #7a8699; }
+.conta-saldo { font-weight: 700; font-size: 14px; color: #f0f2f5; }
+.vazio { color: #6b7688; font-size: 13px; }
+
+.btn {
+  width: 100%; padding: 13px; border: none; border-radius: 10px;
+  font-size: 14px; font-weight: 600; margin-bottom: 10px; cursor: pointer;
+}
+.btn-primario { background: #1462d4; color: white; }
+.btn-secundario { background: #182231; color: #6fa2ff; border: 1px solid #24344d; }
+.btn-perigo { background: #2a1414; color: #ff5c5c; border: 1px solid #4a1f1f; }
+
+.linha-resumo {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 0; font-size: 14px; border-bottom: 1px solid #1c222c; color: #d5dae2;
+}
+.positivo { color: #21c55d; font-weight: 700; }
+.negativo { color: #ef4444; font-weight: 700; }
+.btn-apagar-mini { background: none; border: none; color: #ef4444; font-size: 12px; cursor: pointer; }
+
+.filtros { display: flex; gap: 8px; margin-bottom: 10px; }
+.select, .input, .input-pequeno {
+  width: 100%; padding: 10px; border-radius: 8px; border: 1px solid #232c3a;
+  margin-bottom: 10px; font-size: 14px; background: #0e1218; color: #f0f2f5;
+}
+.input-pequeno { width: 100px; margin-bottom: 0; }
+
+.lista-transacoes { display: flex; flex-direction: column; gap: 6px; }
+.transacao-item {
+  background: #12161d; border: 1px solid #1e2530; border-radius: 10px;
+  padding: 10px 12px; display: flex; justify-content: space-between; align-items: center;
+}
+.transacao-categoria { font-weight: 600; font-size: 13px; color: #f0f2f5; }
+.transacao-nota { font-size: 12px; color: #7a8699; }
+
+.lista-top-gastos { display: flex; flex-direction: column; gap: 8px; }
+.linha-top-gasto {
+  display: flex; justify-content: space-between; align-items: center;
+  background: #12161d; border: 1px solid #1e2530; border-radius: 10px; padding: 10px 12px;
+}
+.pill-vermelho { background: rgba(239,68,68,0.18); color: #ef4444; font-weight: 700; padding: 4px 10px; border-radius: 20px; font-size: 12px; }
+
+.bloco-premium-wrap { position: relative; margin-bottom: 6px; }
+.bloco-premium-wrap.bloqueado canvas { filter: blur(3px); opacity: 0.55; }
+.overlay-premium { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+.btn-premium-cta {
+  background: #1462d4; color: white; border: none; padding: 12px 20px;
+  border-radius: 10px; font-weight: 700; font-size: 14px; cursor: pointer;
+}
+
+.barra-fundo { background: #1c222c; border-radius: 6px; height: 8px; overflow: hidden; margin: 8px 0 4px; }
+.barra-cheia { background: #21c55d; height: 100%; }
+.barra-cheia.excedido { background: #ef4444; }
+
+.avatar-grande {
+  width: 96px; height: 96px; border-radius: 50%;
+  background: #1462d4; color: white; font-weight: 700; font-size: 32px;
+  display: flex; align-items: center; justify-content: center;
+  margin: 24px auto 12px;
+}
+.nome-perfil { text-align: center; font-size: 20px; font-weight: 700; margin-bottom: 16px; }
+.btn-premium-verde {
+  display: block; width: 100%; background: #21c55d; color: #06210f; border: none;
+  padding: 15px; border-radius: 30px; font-weight: 700; font-size: 15px; cursor: pointer; margin-bottom: 8px;
+}
+.pill-premium-ativo {
+  text-align: center; background: rgba(33,197,93,0.15); color: #21c55d;
+  padding: 12px; border-radius: 30px; font-weight: 700; margin-bottom: 8px;
+}
+.linha-perfil {
+  display: flex; align-items: center; gap: 12px;
+  background: #12161d; border: 1px solid #1e2530; border-radius: 12px;
+  padding: 14px; margin-bottom: 8px; cursor: pointer; color: #d5dae2;
+}
+.linha-perfil-texto { flex: 1; font-size: 14px; }
+.seta-perfil { color: #556076; }
+.btn-voltar { background: none; border: none; color: #6fa2ff; font-size: 15px; padding: 4px 0 14px; cursor: pointer; }
+
+.nav-abas {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: #05070a; display: flex;
+  border-top: 1px solid #142032; z-index: 10;
+}
+.nav-btn {
+  flex: 1; padding: 10px 2px 12px; border: none; background: none;
+  font-size: 11px; color: #5c6b85; display: flex; flex-direction: column; align-items: center; gap: 3px;
+}
+.nav-btn.ativo { color: #4f8cff; }
+.fab {
+  position: fixed; right: 16px; bottom: 78px;
+  width: 54px; height: 54px; border-radius: 50%;
+  background: #1462d4; color: white; font-size: 26px; border: none;
+  box-shadow: 0 4px 12px rgba(20,98,212,0.5); z-index: 11; cursor: pointer;
+}
+
+.overlay {
+  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
+  display: flex; align-items: flex-end; z-index: 50;
+}
+.modal {
+  background: #12161d; border-top: 1px solid #24344d; width: 100%;
+  border-radius: 16px 16px 0 0; max-height: 85vh; overflow-y: auto; padding: 16px;
+}
+.modal-cabecalho { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.modal-cabecalho h3 { color: #f0f2f5; margin: 0; }
+.btn-fechar { background: none; border: none; font-size: 22px; color: #7a8699; }
+.modal-corpo { display: flex; flex-direction: column; }
+
+.avatar-mini { object-fit: cover; }
+.avatar-grande { object-fit: cover; }
+.avatar-pequeno-preview { width: 72px; height: 72px; margin: 0; font-size: 24px; }
+img.avatar-mini, img.avatar-grande { background: #1462d4; }
+.linha-foto { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+.input-ficheiro-oculto { position: absolute; width: 1px; height: 1px; opacity: 0; overflow: hidden; }
+.btn-foto { display: inline-block; width: auto; padding: 10px 16px; margin: 0; cursor: pointer; }
+.rotulo-campo { font-size: 12px; color: #7a8699; margin: 10px 0 4px; }
+
+.tela-carregar {
+  display: flex; align-items: center; justify-content: center;
+  height: 100vh; color: #6fa2ff; font-size: 15px;
+}
+.auth-wrap {
+  max-width: 380px; margin: 0 auto; padding: 60px 20px 20px;
+  display: flex; flex-direction: column;
+}
+.auth-logo { font-size: 26px; font-weight: 700; text-align: center; color: #4f8cff; margin-bottom: 4px; }
+.auth-subtitulo { text-align: center; color: #8792a8; margin-bottom: 24px; font-size: 14px; }
+.auth-erro { color: #ef4444; font-size: 13px; margin: -4px 0 10px; }
+.btn-link { background: none; border: none; color: #6fa2ff; font-size: 13px; text-align: center; padding: 8px; cursor: pointer; }
+
+.conta-direita { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; flex-shrink: 0; }
+.item-acoes { display: flex; gap: 4px; }
+.icone-acao {
+  background: #182231; border: 1px solid #24344d; color: #6fa2ff;
+  border-radius: 6px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+}
+.icone-acao svg { width: 14px; height: 14px; }
+.icone-acao.icone-apagar { color: #ef4444; border-color: #3a1e1e; }
+
+.meta-card { padding: 14px; }
+.meta-topo { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+.meta-imagem {
+  width: 52px; height: 52px; border-radius: 12px; object-fit: cover; flex-shrink: 0; background: #1c222c;
+}
+.meta-imagem-vazia { display: flex; align-items: center; justify-content: center; color: #556076; }
+.meta-imagem-preview { width: 72px; height: 72px; }
+.meta-info { flex: 1; }
+.meta-percentagem { font-size: 13px; color: #4f8cff; font-weight: 700; margin-top: 2px; }
+
+.modal-wizard { padding-top: 0; }
+.modal-alca { width: 40px; height: 4px; background: #2a3446; border-radius: 4px; margin: 10px auto 14px; }
+.wizard-titulo { font-size: 22px; color: #d5dae2; font-weight: 400; margin-bottom: 18px; }
+.wizard-titulo strong { color: #f0f2f5; font-weight: 700; }
+
+.wizard-opcoes { display: flex; gap: 10px; }
+.wizard-opcao-card {
+  flex: 1; background: #12161d; border: 1px solid #1e2530; border-radius: 14px;
+  padding: 18px 8px; display: flex; flex-direction: column; align-items: center; gap: 8px; cursor: pointer;
+}
+.wizard-opcao-icone {
+  width: 46px; height: 46px; border-radius: 50%; border: 2px solid; display: flex; align-items: center; justify-content: center;
+}
+.wizard-opcao-label1 { font-size: 12px; color: #8792a8; }
+.wizard-opcao-label2 { font-size: 13px; color: #f0f2f5; font-weight: 700; }
+
+.wizard-valor-linha { display: flex; align-items: baseline; gap: 8px; margin-bottom: 4px; }
+.wizard-valor-prefixo { font-size: 20px; color: #6fa2ff; font-weight: 700; }
+.wizard-valor-display { font-size: 40px; font-weight: 700; color: #f0f2f5; }
+.wizard-expressao { color: #556076; font-size: 14px; min-height: 18px; margin-bottom: 20px; }
+
+.wizard-calc-grelha { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.wizard-calc-tecla {
+  background: #12161d; border: 1px solid #1e2530; color: #f0f2f5;
+  border-radius: 10px; padding: 16px 0; font-size: 18px; cursor: pointer;
+}
+.wizard-calc-op { color: #6fa2ff; }
+.wizard-calc-confirmar { background: #1462d4; border-color: #1462d4; color: white; }
+.wizard-calc-vazio { visibility: hidden; }
+
+.wizard-segmentado { display: flex; border: 1px solid #24344d; border-radius: 10px; overflow: hidden; margin-bottom: 14px; }
+.wizard-segmento { flex: 1; background: #0e1218; color: #8792a8; border: none; padding: 10px 4px; font-size: 12px; cursor: pointer; }
+.wizard-segmento.ativo { background: #1462d4; color: white; }
+
+.wizard-toggle-linha { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; color: #d5dae2; }
+.wizard-toggle-esquerda { display: flex; align-items: center; gap: 10px; font-size: 14px; }
+.wizard-switch { width: 44px; height: 26px; border-radius: 20px; background: #232c3a; position: relative; cursor: pointer; flex-shrink: 0; }
+.wizard-switch.ativo { background: #1462d4; }
+.wizard-switch-bola { width: 20px; height: 20px; border-radius: 50%; background: white; position: absolute; top: 3px; left: 3px; transition: left 0.15s; }
+.wizard-switch.ativo .wizard-switch-bola { left: 21px; }
+
+.auth-slogan { text-align: center; color: #6fa2ff; font-size: 13px; font-style: italic; margin-bottom: 18px; padding: 0 10px; }
+
+.auth-input-codigo { text-align: center; font-size: 28px; letter-spacing: 8px; font-weight: 700; }
+.auth-ajuda { color: #6b7688; font-size: 12px; text-align: center; margin-top: 4px; padding: 0 6px; }
+
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+"use strict";
+/* ===================== Constantes ===================== */
+const BANCOS = [
+    { tipo: "millennium_bim", label: "Millennium bim", sigla: "BIM", cor: "#e6007e", icone: "banco" },
+    { tipo: "bci", label: "BCI", sigla: "BCI", cor: "#e6690e", icone: "banco" },
+    { tipo: "standard_bank", label: "Standard Bank", sigla: "SB", cor: "#0033a0", icone: "banco" },
+    { tipo: "absa", label: "Absa Bank", sigla: "ABS", cor: "#e4022c", icone: "banco" },
+    { tipo: "fnb", label: "FNB Moçambique", sigla: "FNB", cor: "#009045", icone: "banco" },
+    { tipo: "moza_banco", label: "Moza Banco", sigla: "MB", cor: "#f7941e", icone: "banco" },
+    { tipo: "nedbank", label: "Nedbank", sigla: "NED", cor: "#0a7d34", icone: "banco" },
+    { tipo: "letshego", label: "Letshego", sigla: "LET", cor: "#6a1b9a", icone: "banco" },
+    { tipo: "banco_abc", label: "Banco ABC", sigla: "ABC", cor: "#004c97", icone: "banco" },
+    { tipo: "first_capital", label: "First Capital Bank", sigla: "FCB", cor: "#1b5e20", icone: "banco" },
+    { tipo: "ecobank", label: "EcoBank", sigla: "ECO", cor: "#00693e", icone: "banco" },
+    { tipo: "mpesa", label: "M-Pesa", sigla: "M-P", cor: "#e30613", icone: "telefone" },
+    { tipo: "emola", label: "e-Mola", sigla: "eM", cor: "#f9a01b", icone: "telefone" },
+    { tipo: "mkesh", label: "mKesh", sigla: "mK", cor: "#f4c400", icone: "telefone" },
+    { tipo: "numerario", label: "Numerário (dinheiro)", sigla: "$", cor: "#5a6472", icone: "dinheiro" },
+];
+const BANDEIRAS = [
+    { valor: "visa", label: "VISA", cor: "#1a1f71" },
+    { valor: "mastercard", label: "MASTERCARD", cor: "#eb6020" },
+    { valor: "outro", label: "OUTRO", cor: "#3a4457" },
+];
+const CATEGORIAS_PADRAO = {
+    "Alimentação": ["Mercado", "Restaurante", "Talhão/Machamba"],
+    "Transporte": ["Chapa/Transporte semicolectivo", "Combustível", "Táxi/Uber", "Manutenção viatura"],
+    "Habitação": ["Renda", "Água", "Eletricidade (EDM)", "Internet/Net", "Manutenção"],
+    "Saúde": ["Consultas", "Farmácia", "Seguro de saúde"],
+    "Educação": ["Propinas", "Material escolar", "Explicações"],
+    "Lazer": ["Restaurantes/Saídas", "Assinaturas (streaming)", "Viagens"],
+    "Salário": ["Salário principal", "Trabalho extra"],
+    "Negócio próprio": ["Vendas", "Despesas do negócio"],
+    "Transferências": ["Entre contas", "Enviado a família", "Recebido de família"],
+    "Outros": ["Diversos"],
+};
+const TAXAS_PADRAO = { USD: 64, ZAR: 3.6, EUR: 68 };
+const STORAGE_KEY = "meusaldo_estado_v2";
+/* ===================== Configuração Supabase ===================== */
+/* Cria um projeto em https://supabase.com, corre o ficheiro
+   meu-bolso-schema.sql no SQL Editor, e cola aqui o URL e a
+   "anon public key" (Project Settings → API). Sem isto preenchido,
+   a app funciona apenas neste aparelho (sem criar conta/entrar). */
+const SUPABASE_URL = "https://ipvthpbxafqdifhdgtfi.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwdnRocGJ4YWZxZGlmaGRndGZpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2ODAyNTksImV4cCI6MjEwNDI1NjI1OX0.CqIZNAcyigtzjy2QIYuyIpDpXchmv49cL8mrgo3QMV4";
+const w = window;
+const supabaseConfigurado = SUPABASE_URL.startsWith("http") && SUPABASE_ANON_KEY.length > 20 && typeof w.supabase !== "undefined";
+const supa = supabaseConfigurado ? w.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+let sessaoAtual = null;
+let telaAuth = "login";
+let erroAuth = "";
+let carregandoApp = supabaseConfigurado; // só mostra "a carregar" se formos verificar sessão no Supabase
+const MESES_COMPLETOS = ["janeiro", "fevereiro", "março", "abril", "maio", "junho", "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"];
+const MESES_ABREV = ["jan.", "fev.", "mar.", "abr.", "mai.", "jun.", "jul.", "ago.", "set.", "out.", "nov.", "dez."];
+/* ===================== Armazenamento ===================== */
+function estadoPadrao() {
+    return {
+        nomeUsuario: "Utilizador",
+        email: "",
+        telefone: "",
+        foto: "",
+        contas: [],
+        cartoes: [],
+        transacoes: [],
+        orcamentos: [],
+        metas: [],
+        categorias: JSON.parse(JSON.stringify(CATEGORIAS_PADRAO)),
+        taxas: { ...TAXAS_PADRAO },
+        moedaPrincipal: "MZN",
+        plano: "gratuito",
+        planoExpiraEm: null,
+        saldoOculto: false,
+    };
+}
+function carregarEstado() {
+    var _a, _b, _c, _d, _e, _f, _g, _h;
+    try {
+        const raw = window.localStorage.getItem(STORAGE_KEY);
+        if (!raw)
+            return estadoPadrao();
+        const parsed = JSON.parse(raw);
+        const base = estadoPadrao();
+        return {
+            nomeUsuario: (_a = parsed.nomeUsuario) !== null && _a !== void 0 ? _a : base.nomeUsuario,
+            email: (_b = parsed.email) !== null && _b !== void 0 ? _b : base.email,
+            telefone: (_c = parsed.telefone) !== null && _c !== void 0 ? _c : base.telefone,
+            foto: (_d = parsed.foto) !== null && _d !== void 0 ? _d : base.foto,
+            contas: Array.isArray(parsed.contas) ? parsed.contas : base.contas,
+            cartoes: Array.isArray(parsed.cartoes) ? parsed.cartoes : base.cartoes,
+            transacoes: Array.isArray(parsed.transacoes) ? parsed.transacoes : base.transacoes,
+            orcamentos: Array.isArray(parsed.orcamentos) ? parsed.orcamentos : base.orcamentos,
+            metas: Array.isArray(parsed.metas) ? parsed.metas : base.metas,
+            categorias: parsed.categorias && Object.keys(parsed.categorias).length > 0 ? parsed.categorias : base.categorias,
+            taxas: (_e = parsed.taxas) !== null && _e !== void 0 ? _e : base.taxas,
+            moedaPrincipal: (_f = parsed.moedaPrincipal) !== null && _f !== void 0 ? _f : base.moedaPrincipal,
+            plano: ["semanal", "quinzenal", "mensal"].includes((_g = parsed.plano) !== null && _g !== void 0 ? _g : "") ? parsed.plano : "gratuito",
+            planoExpiraEm: (_h = parsed.planoExpiraEm) !== null && _h !== void 0 ? _h : null,
+            saldoOculto: Boolean(parsed.saldoOculto),
+        };
+    }
+    catch {
+        return estadoPadrao();
+    }
+}
+function guardarEstado(e) {
+    try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(e));
+    }
+    catch {
+        alert("Não foi possível guardar os dados neste dispositivo (armazenamento cheio ou bloqueado).");
+    }
+    if (sessaoAtual)
+        sincronizarParaSupabase();
+}
+let sincronizarPendente;
+function sincronizarParaSupabase() {
+    if (!supa || !sessaoAtual)
+        return;
+    const userId = sessaoAtual.id;
+    window.clearTimeout(sincronizarPendente);
+    sincronizarPendente = window.setTimeout(() => {
+        supa.from("dados_app").update({ estado }).eq("user_id", userId).then(() => { });
+    }, 800);
+}
+let estado = carregarEstado();
+function novoId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+/* ===================== Validação / Segurança ===================== */
+function valorValido(v) {
+    return Number.isFinite(v) && v >= 0 && v < 1000000000;
+}
+function textoSeguro(input, max = 80) {
+    return input.replace(/[<>]/g, "").trim().slice(0, max);
+}
+/* ===================== Utilidades ===================== */
+function formatarMoeda(valor, moeda = "MZN") {
+    const simbolos = { MZN: "MT", USD: "US$", ZAR: "R", EUR: "€" };
+    const formatado = new Intl.NumberFormat("pt-MZ", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(valor);
+    return moeda === "MZN" ? `${formatado} MT` : `${simbolos[moeda]} ${formatado}`;
+}
+function converterParaMZN(valor, moeda) {
+    if (moeda === "MZN")
+        return valor;
+    return valor * estado.taxas[moeda];
+}
+function bancoInfo(tipo) {
+    var _a;
+    return (_a = BANCOS.find((b) => b.tipo === tipo)) !== null && _a !== void 0 ? _a : BANCOS[BANCOS.length - 1];
+}
+function bandeiraInfo(b) {
+    var _a;
+    return (_a = BANDEIRAS.find((x) => x.valor === b)) !== null && _a !== void 0 ? _a : BANDEIRAS[2];
+}
+function saldoConta(conta) {
+    const soma = estado.transacoes
+        .filter((t) => t.contaId === conta.id)
+        .reduce((acc, t) => acc + (t.tipo === "receita" ? t.valor : -t.valor), 0);
+    return conta.saldoInicial + soma;
+}
+function saldoConsolidadoMZN() {
+    return estado.contas.reduce((acc, c) => acc + converterParaMZN(saldoConta(c), c.moeda), 0);
+}
+function ehPremium() {
+    return estado.plano !== "gratuito";
+}
+function iniciais(nome) {
+    const partes = nome.trim().split(/\s+/).filter(Boolean);
+    if (partes.length === 0)
+        return "?";
+    if (partes.length === 1)
+        return partes[0].slice(0, 2).toUpperCase();
+    return (partes[0][0] + partes[partes.length - 1][0]).toUpperCase();
+}
+function renderAvatar(classe) {
+    if (estado.foto) {
+        const img = el("img", { classe, attrs: { src: estado.foto, alt: "Foto de perfil" } });
+        return img;
+    }
+    return el("div", { classe, texto: iniciais(estado.nomeUsuario) });
+}
+/* ===================== Elementos base ===================== */
+function el(tag, opts = {}) {
+    const node = document.createElement(tag);
+    if (opts.classe)
+        node.className = opts.classe;
+    if (opts.texto !== undefined)
+        node.textContent = opts.texto;
+    if (opts.attrs)
+        for (const [k, v] of Object.entries(opts.attrs))
+            node.setAttribute(k, v);
+    return node;
+}
+function limpar(node) {
+    while (node.firstChild)
+        node.removeChild(node.firstChild);
+}
+let abaAtual = "inicio";
+let perfilVista = "menu";
+const ABAS = [
+    { id: "inicio", label: "Início", icone: "home" },
+    { id: "transacoes", label: "Transações", icone: "trans" },
+    { id: "relatorios", label: "Relatórios", icone: "chart" },
+    { id: "metas", label: "Metas", icone: "medalha" },
+    { id: "perfil", label: "Perfil", icone: "user" },
+];
+function mudarAba(aba) {
+    abaAtual = aba;
+    if (aba === "perfil")
+        perfilVista = "menu";
+    renderizarTudo();
+}
+let anoSel = new Date().getFullYear();
+let mesSel = new Date().getMonth();
+function mudarMes(delta) {
+    mesSel += delta;
+    if (mesSel < 0) {
+        mesSel = 11;
+        anoSel--;
+    }
+    if (mesSel > 11) {
+        mesSel = 0;
+        anoSel++;
+    }
+    renderizarTudo();
+}
+/* ===================== Ícones simples (SVG inline, sem dependências externas) ===================== */
+function iconeSvg(nome) {
+    var _a;
+    const ns = "http://www.w3.org/2000/svg";
+    const svg = document.createElementNS(ns, "svg");
+    svg.setAttribute("viewBox", "0 0 24 24");
+    svg.setAttribute("width", "22");
+    svg.setAttribute("height", "22");
+    svg.setAttribute("fill", "none");
+    svg.setAttribute("stroke", "currentColor");
+    svg.setAttribute("stroke-width", "2");
+    svg.setAttribute("stroke-linecap", "round");
+    svg.setAttribute("stroke-linejoin", "round");
+    const paths = {
+        home: ["M3 11l9-8 9 8", "M5 10v10h14V10"],
+        trans: ["M7 7h13l-3-3", "M17 17H4l3 3", "M7 7l0 0", "M17 17l0 0"],
+        chart: ["M4 20V10", "M12 20V4", "M20 20v-7"],
+        user: ["M12 12a4 4 0 100-8 4 4 0 000 8z", "M4 20c1.5-4 5-6 8-6s6.5 2 8 6"],
+        sino: ["M6 8a6 6 0 0112 0c0 5 2 6 2 6H4s2-1 2-6", "M10 20a2 2 0 004 0"],
+        engrenagem: ["M12 9a3 3 0 100 6 3 3 0 000-6z"],
+        seta: ["M9 18l6-6-6-6"],
+        olho: ["M2 12s4-7 10-7 10 7 10 7-4 7-10 7-10-7-10-7z", "M12 15a3 3 0 100-6 3 3 0 000 6z"],
+        cartao: ["M3 6h18v12H3z", "M3 10h18"],
+        carteira: ["M3 7h15a3 3 0 013 3v7a2 2 0 01-2 2H3z", "M17 12h3"],
+        grelha: ["M4 4h6v6H4z", "M14 4h6v6h-6z", "M4 14h6v6H4z", "M14 14h6v6h-6z"],
+        losango: ["M12 3l9 9-9 9-9-9z"],
+        medalha: ["M12 15a6 6 0 100-12 6 6 0 000 12z", "M9 20l3-3 3 3"],
+        cambio: ["M7 7h11l-3-3", "M17 17H6l3 3", "M4 12h16"],
+        banco: ["M3 10l9-6 9 6", "M5 10v8", "M9 10v8", "M13 10v8", "M17 10v8", "M3 20h18", "M3 10h18"],
+        telefone: ["M7 2h10a1 1 0 011 1v18a1 1 0 01-1 1H7a1 1 0 01-1-1V3a1 1 0 011-1z", "M11 18h2"],
+        dinheiro: ["M2 7h20v10H2z", "M12 9a3 3 0 100 6 3 3 0 000-6z"],
+        camera: ["M4 8h3l2-2h6l2 2h3v11H4z", "M12 12a3 3 0 100 6 3 3 0 000-6z"],
+        email: ["M3 5h18v14H3z", "M3 5l9 8 9-8"],
+        lapis: ["M12 20h9", "M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z"],
+        lixo: ["M3 6h18", "M8 6V4h8v2", "M19 6l-1 14H6L5 6", "M10 11v6", "M14 11v6"],
+        "seta-baixo": ["M6 9l6 6 6-6"],
+        "seta-cima": ["M6 15l6-6 6 6"],
+        check: ["M5 12l4 4 10-10"],
+        repetir: ["M4 4v6h6", "M20 20v-6h-6", "M5.5 9A7 7 0 0119 8.5", "M18.5 15A7 7 0 015 15.5"],
+    };
+    for (const d of (_a = paths[nome]) !== null && _a !== void 0 ? _a : []) {
+        const p = document.createElementNS(ns, "path");
+        p.setAttribute("d", d);
+        svg.appendChild(p);
+    }
+    return svg;
+}
+/* ===================== Cabeçalho ===================== */
+function renderCabecalho(raiz) {
+    var _a;
+    if (abaAtual === "perfil")
+        return;
+    const topo = el("header", { classe: "topo" });
+    if (abaAtual === "inicio") {
+        const linhaTopo = el("div", { classe: "linha-topo" });
+        const avatar = renderAvatar("avatar-mini");
+        linhaTopo.appendChild(avatar);
+        const saudacao = el("div", { classe: "saudacao", texto: `Olá, ${estado.nomeUsuario}` });
+        linhaTopo.appendChild(saudacao);
+        const icones = el("div", { classe: "icones-topo" });
+        const btnSino = el("button", { classe: "icone-btn" });
+        btnSino.appendChild(iconeSvg("sino"));
+        btnSino.addEventListener("click", () => alert("Sem notificações novas."));
+        icones.appendChild(btnSino);
+        const btnEngrenagem = el("button", { classe: "icone-btn" });
+        btnEngrenagem.appendChild(iconeSvg("engrenagem"));
+        btnEngrenagem.addEventListener("click", () => mudarAba("perfil"));
+        icones.appendChild(btnEngrenagem);
+        linhaTopo.appendChild(icones);
+        topo.appendChild(linhaTopo);
+        const cardSaldo = el("div", { classe: "card-saldo-topo" });
+        cardSaldo.appendChild(el("div", { classe: "label", texto: "Saldo geral" }));
+        const linhaValor = el("div", { classe: "linha-valor-saldo" });
+        const saldo = saldoConsolidadoMZN();
+        linhaValor.appendChild(el("div", { classe: "valor-grande", texto: estado.saldoOculto ? "••••••" : formatarMoeda(saldo, "MZN") }));
+        const btnOlho = el("button", { classe: "icone-btn" });
+        btnOlho.appendChild(iconeSvg("olho"));
+        btnOlho.addEventListener("click", () => { estado.saldoOculto = !estado.saldoOculto; guardarEstado(estado); renderizarTudo(); });
+        linhaValor.appendChild(btnOlho);
+        cardSaldo.appendChild(linhaValor);
+        topo.appendChild(cardSaldo);
+    }
+    else if (abaAtual === "relatorios") {
+        const linha = el("div", { classe: "linha-topo" });
+        linha.appendChild(el("div", { classe: "titulo-secao", texto: "Relatórios" }));
+        const nav = el("div", { classe: "mini-nav-mes" });
+        const btnAnt = el("button", { classe: "seta-mes", texto: "‹" });
+        btnAnt.addEventListener("click", () => mudarMes(-1));
+        const label = el("div", { classe: "mes-label", texto: `${MESES_ABREV[mesSel]} ${anoSel}` });
+        const btnProx = el("button", { classe: "seta-mes", texto: "›" });
+        btnProx.addEventListener("click", () => mudarMes(1));
+        nav.appendChild(btnAnt);
+        nav.appendChild(label);
+        nav.appendChild(btnProx);
+        linha.appendChild(nav);
+        topo.appendChild(linha);
+    }
+    else {
+        const titulos = { transacoes: "Transações", metas: "Metas" };
+        topo.appendChild(el("div", { classe: "titulo-secao", texto: (_a = titulos[abaAtual]) !== null && _a !== void 0 ? _a : "" }));
+    }
+    raiz.appendChild(topo);
+}
+/* ===================== Render: Início ===================== */
+function renderInicio(container) {
+    const navMes = el("div", { classe: "nav-mes" });
+    const btnAnt = el("button", { classe: "seta-mes", texto: "‹" });
+    btnAnt.addEventListener("click", () => mudarMes(-1));
+    navMes.appendChild(btnAnt);
+    navMes.appendChild(el("div", { classe: "mes-label-grande", texto: `${MESES_COMPLETOS[mesSel]} de ${anoSel}` }));
+    const btnProx = el("button", { classe: "seta-mes", texto: "›" });
+    btnProx.addEventListener("click", () => mudarMes(1));
+    navMes.appendChild(btnProx);
+    container.appendChild(navMes);
+    const resumo = resumoMes(anoSel, mesSel);
+    const linhaCards = el("div", { classe: "linha-stats" });
+    const cardReceitas = el("div", { classe: "stat-card" });
+    const iconeR = el("div", { classe: "stat-icone stat-azul", texto: "$" });
+    cardReceitas.appendChild(iconeR);
+    cardReceitas.appendChild(el("div", { classe: "stat-label", texto: "Receitas" }));
+    cardReceitas.appendChild(el("div", { classe: "stat-valor", texto: formatarMoeda(resumo.receitas, "MZN") }));
+    linhaCards.appendChild(cardReceitas);
+    const cardDespesas = el("div", { classe: "stat-card" });
+    const iconeD = el("div", { classe: "stat-icone stat-vermelho", texto: "$" });
+    cardDespesas.appendChild(iconeD);
+    cardDespesas.appendChild(el("div", { classe: "stat-label", texto: "Despesas" }));
+    cardDespesas.appendChild(el("div", { classe: "stat-valor", texto: formatarMoeda(resumo.despesas, "MZN") }));
+    linhaCards.appendChild(cardDespesas);
+    const cardSaldoMes = el("div", { classe: "stat-card" });
+    const saldoMes = resumo.receitas - resumo.despesas;
+    const iconeS = el("div", { classe: saldoMes >= 0 ? "stat-icone stat-verde" : "stat-icone stat-vermelho", texto: "$" });
+    cardSaldoMes.appendChild(iconeS);
+    cardSaldoMes.appendChild(el("div", { classe: "stat-label", texto: "Saldo do mês" }));
+    cardSaldoMes.appendChild(el("div", { classe: "stat-valor", texto: formatarMoeda(saldoMes, "MZN") }));
+    linhaCards.appendChild(cardSaldoMes);
+    container.appendChild(linhaCards);
+    if (!ehPremium()) {
+        const cardInsights = el("div", { classe: "card card-insights" });
+        const badge = el("div", { classe: "badge-premium", texto: "premium" });
+        cardInsights.appendChild(badge);
+        const linhaTitulo = el("div", { classe: "insights-titulo" });
+        linhaTitulo.appendChild(el("span", { texto: "insights " }));
+        linhaTitulo.appendChild(el("span", { classe: "tag-ia", texto: "IA" }));
+        cardInsights.appendChild(linhaTitulo);
+        cardInsights.appendChild(el("p", { classe: "vazio", texto: "Assine o Premium para teres insights personalizados sobre os teus gastos." }));
+        cardInsights.addEventListener("click", () => mudarAba("perfil"));
+        container.appendChild(cardInsights);
+    }
+    // Meus cartões
+    const cabCartoes = el("div", { classe: "cabecalho-secao" });
+    cabCartoes.appendChild(el("h3", { texto: "Meus cartões" }));
+    const btnAddCartao = el("button", { classe: "btn-mais", texto: "+" });
+    btnAddCartao.addEventListener("click", () => abrirFormularioCartao());
+    cabCartoes.appendChild(btnAddCartao);
+    container.appendChild(cabCartoes);
+    if (estado.cartoes.length === 0) {
+        container.appendChild(el("p", { classe: "vazio", texto: "Ainda não tens cartões adicionados." }));
+    }
+    for (const cartao of estado.cartoes) {
+        container.appendChild(itemCartao(cartao));
+    }
+    // Minhas contas bancárias
+    const cabContas = el("div", { classe: "cabecalho-secao" });
+    cabContas.appendChild(el("h3", { texto: "Minhas contas bancárias" }));
+    const btnAddConta = el("button", { classe: "btn-mais", texto: "+" });
+    btnAddConta.addEventListener("click", () => abrirFormularioConta());
+    cabContas.appendChild(btnAddConta);
+    container.appendChild(cabContas);
+    if (estado.contas.length === 0) {
+        container.appendChild(el("p", { classe: "vazio", texto: "Ainda não adicionaste nenhuma conta ou carteira." }));
+    }
+    const listaContas = el("div", { classe: "lista-contas" });
+    for (const conta of estado.contas)
+        listaContas.appendChild(itemConta(conta));
+    container.appendChild(listaContas);
+}
+function itemConta(conta) {
+    const info = bancoInfo(conta.tipo);
+    const item = el("div", { classe: "conta-item" });
+    const icone = el("div", { classe: "conta-icone" });
+    icone.style.background = info.cor;
+    icone.appendChild(iconeSvg(info.icone));
+    item.appendChild(icone);
+    const meio = el("div", { classe: "conta-meio" });
+    meio.appendChild(el("div", { classe: "conta-nome", texto: conta.nome }));
+    meio.appendChild(el("div", { classe: "conta-tipo", texto: info.label }));
+    item.appendChild(meio);
+    const direita = el("div", { classe: "conta-direita" });
+    direita.appendChild(el("div", { classe: "conta-saldo", texto: formatarMoeda(saldoConta(conta), conta.moeda) }));
+    const acoes = el("div", { classe: "item-acoes" });
+    const btnEditar = el("button", { classe: "icone-acao" });
+    btnEditar.appendChild(iconeSvg("lapis"));
+    btnEditar.addEventListener("click", (ev) => { ev.stopPropagation(); abrirFormularioConta(conta); });
+    acoes.appendChild(btnEditar);
+    const btnApagar = el("button", { classe: "icone-acao icone-apagar" });
+    btnApagar.appendChild(iconeSvg("lixo"));
+    btnApagar.addEventListener("click", (ev) => { ev.stopPropagation(); apagarConta(conta.id); });
+    acoes.appendChild(btnApagar);
+    direita.appendChild(acoes);
+    item.appendChild(direita);
+    return item;
+}
+function apagarConta(id) {
+    const temTransacoes = estado.transacoes.some((t) => t.contaId === id);
+    const aviso = temTransacoes
+        ? "Esta conta tem transações associadas. Apagar a conta vai apagar também essas transações. Continuar?"
+        : "Apagar esta conta?";
+    if (!confirm(aviso))
+        return;
+    estado.contas = estado.contas.filter((c) => c.id !== id);
+    estado.transacoes = estado.transacoes.filter((t) => t.contaId !== id);
+    guardarEstado(estado);
+    renderizarTudo();
+}
+function itemCartao(cartao) {
+    const info = bandeiraInfo(cartao.bandeira);
+    const item = el("div", { classe: "conta-item" });
+    const badge = el("div", { classe: "cartao-badge", texto: info.label });
+    badge.style.background = info.cor;
+    item.appendChild(badge);
+    const meio = el("div", { classe: "conta-meio" });
+    meio.appendChild(el("div", { classe: "conta-nome", texto: cartao.nome }));
+    meio.appendChild(el("div", { classe: "conta-tipo", texto: `vence dia ${cartao.diaVencimento}` }));
+    item.appendChild(meio);
+    const direita = el("div", { classe: "conta-direita" });
+    direita.appendChild(el("div", { classe: "conta-saldo", texto: formatarMoeda(cartao.saldoAtual, "MZN") }));
+    const acoes = el("div", { classe: "item-acoes" });
+    const btnEditar = el("button", { classe: "icone-acao" });
+    btnEditar.appendChild(iconeSvg("lapis"));
+    btnEditar.addEventListener("click", (ev) => { ev.stopPropagation(); abrirFormularioCartao(cartao); });
+    acoes.appendChild(btnEditar);
+    const btnApagar = el("button", { classe: "icone-acao icone-apagar" });
+    btnApagar.appendChild(iconeSvg("lixo"));
+    btnApagar.addEventListener("click", (ev) => { ev.stopPropagation(); apagarCartao(cartao.id); });
+    acoes.appendChild(btnApagar);
+    direita.appendChild(acoes);
+    item.appendChild(direita);
+    return item;
+}
+function apagarCartao(id) {
+    if (!confirm("Apagar este cartão?"))
+        return;
+    estado.cartoes = estado.cartoes.filter((c) => c.id !== id);
+    guardarEstado(estado);
+    renderizarTudo();
+}
+function resumoMes(ano, mes) {
+    let receitas = 0;
+    let despesas = 0;
+    for (const t of estado.transacoes) {
+        const d = new Date(t.data);
+        if (d.getMonth() !== mes || d.getFullYear() !== ano)
+            continue;
+        const conta = estado.contas.find((c) => c.id === t.contaId);
+        const valorMZN = converterParaMZN(t.valor, conta ? conta.moeda : "MZN");
+        if (t.tipo === "receita")
+            receitas += valorMZN;
+        else
+            despesas += valorMZN;
+    }
+    return { receitas, despesas };
+}
+/* ===================== Render: Transações ===================== */
+let filtroContaExtrato = "todas";
+let filtroCategoriaExtrato = "todas";
+function renderTransacoes(container) {
+    const filtros = el("div", { classe: "filtros" });
+    const selConta = el("select", { classe: "select" });
+    selConta.appendChild(el("option", { texto: "Todas as contas", attrs: { value: "todas" } }));
+    for (const c of estado.contas)
+        selConta.appendChild(el("option", { texto: c.nome, attrs: { value: c.id } }));
+    selConta.value = filtroContaExtrato;
+    selConta.addEventListener("change", () => { filtroContaExtrato = selConta.value; renderizarTudo(); });
+    filtros.appendChild(selConta);
+    const selCat = el("select", { classe: "select" });
+    selCat.appendChild(el("option", { texto: "Todas as categorias", attrs: { value: "todas" } }));
+    for (const cat of Object.keys(estado.categorias))
+        selCat.appendChild(el("option", { texto: cat, attrs: { value: cat } }));
+    selCat.value = filtroCategoriaExtrato;
+    selCat.addEventListener("change", () => { filtroCategoriaExtrato = selCat.value; renderizarTudo(); });
+    filtros.appendChild(selCat);
+    container.appendChild(filtros);
+    const lista = el("div", { classe: "lista-transacoes" });
+    const transacoesFiltradas = estado.transacoes
+        .filter((t) => filtroContaExtrato === "todas" || t.contaId === filtroContaExtrato)
+        .filter((t) => filtroCategoriaExtrato === "todas" || t.categoria === filtroCategoriaExtrato)
+        .sort((a, b) => b.data.localeCompare(a.data));
+    if (transacoesFiltradas.length === 0) {
+        lista.appendChild(el("p", { classe: "vazio", texto: "Nenhuma transação encontrada." }));
+    }
+    for (const t of transacoesFiltradas) {
+        const conta = estado.contas.find((c) => c.id === t.contaId);
+        const linha = el("div", { classe: "transacao-item" });
+        const esquerda = el("div", { classe: "transacao-esquerda" });
+        esquerda.appendChild(el("div", { classe: "transacao-categoria", texto: `${t.categoria} · ${t.subcategoria}` }));
+        let notaLinha = `${t.data} · ${conta ? conta.nome : "?"}`;
+        if (t.recorrencia === "parcelada" && t.parcelaAtual && t.parcelaTotal)
+            notaLinha += ` · Parcela ${t.parcelaAtual}/${t.parcelaTotal}`;
+        else if (t.recorrencia === "fixa")
+            notaLinha += " · Fixa";
+        else if (t.recorrencia === "variavel")
+            notaLinha += " · Variável";
+        esquerda.appendChild(el("div", { classe: "transacao-nota", texto: notaLinha }));
+        linha.appendChild(esquerda);
+        const valorTxt = (t.tipo === "receita" ? "+ " : "- ") + formatarMoeda(t.valor, conta ? conta.moeda : "MZN");
+        linha.appendChild(el("div", { classe: t.tipo === "receita" ? "positivo" : "negativo", texto: valorTxt }));
+        lista.appendChild(linha);
+    }
+    container.appendChild(lista);
+}
+/* ===================== Render: Relatórios ===================== */
+function renderRelatorios(container) {
+    var _a;
+    const porCategoriaMes = resumoDespesasPorCategoriaMes(anoSel, mesSel);
+    const entradasMes = Object.entries(porCategoriaMes).sort((a, b) => b[1] - a[1]);
+    container.appendChild(el("h3", { texto: "Maiores gastos do mês" }));
+    if (entradasMes.length === 0) {
+        container.appendChild(el("p", { classe: "vazio", texto: "Sem despesas registadas neste mês." }));
+    }
+    else {
+        const listaTop = el("div", { classe: "lista-top-gastos" });
+        for (const [cat, valor] of entradasMes.slice(0, 5)) {
+            const linha = el("div", { classe: "linha-top-gasto" });
+            linha.appendChild(el("span", { texto: cat }));
+            linha.appendChild(el("span", { classe: "pill-vermelho", texto: formatarMoeda(valor, "MZN") }));
+            listaTop.appendChild(linha);
+        }
+        container.appendChild(listaTop);
+    }
+    const w = window;
+    if (entradasMes.length > 0) {
+        container.appendChild(el("h3", { texto: "Despesas por categoria" }));
+        const canvasPizza = el("canvas", { attrs: { id: "grafico-pizza", height: "220" } });
+        container.appendChild(canvasPizza);
+        if (w.Chart) {
+            new w.Chart(canvasPizza, {
+                type: "pie",
+                data: { labels: entradasMes.map(([c]) => c), datasets: [{ data: entradasMes.map(([, v]) => v) }] },
+                options: { plugins: { legend: { position: "bottom", labels: { color: "#d5dae2" } } } },
+            });
+        }
+    }
+    // Secção premium: evolução mensal + saldo acumulado
+    container.appendChild(el("h3", { texto: "Evolução mensal" }));
+    const blocoPremium1 = el("div", { classe: "bloco-premium-wrap" });
+    const canvasEvolucao = el("canvas", { attrs: { id: "grafico-evolucao", height: "200" } });
+    blocoPremium1.appendChild(canvasEvolucao);
+    container.appendChild(blocoPremium1);
+    container.appendChild(el("h3", { texto: "Evolução do saldo" }));
+    const blocoPremium2 = el("div", { classe: "bloco-premium-wrap" });
+    const canvasSaldo = el("canvas", { attrs: { id: "grafico-saldo", height: "200" } });
+    blocoPremium2.appendChild(canvasSaldo);
+    container.appendChild(blocoPremium2);
+    if (!ehPremium()) {
+        [blocoPremium1, blocoPremium2].forEach((bloco) => {
+            bloco.classList.add("bloqueado");
+            const overlay = el("div", { classe: "overlay-premium" });
+            const btn = el("button", { classe: "btn-premium-cta" });
+            btn.appendChild(document.createTextNode("⭐ Se torne Premium"));
+            btn.addEventListener("click", () => mudarAba("perfil"));
+            overlay.appendChild(btn);
+            bloco.appendChild(overlay);
+        });
+    }
+    if (w.Chart) {
+        const evolucao = evolucaoMensal(6);
+        new w.Chart(canvasEvolucao, {
+            type: "bar",
+            data: {
+                labels: evolucao.labels,
+                datasets: [
+                    { label: "Receitas", data: evolucao.receitas, backgroundColor: "#21c55d" },
+                    { label: "Despesas", data: evolucao.despesas, backgroundColor: "#ef4444" },
+                ],
+            },
+            options: {
+                plugins: { legend: { position: "bottom", labels: { color: "#d5dae2" } } },
+                scales: { x: { ticks: { color: "#8792a8" }, grid: { color: "#1c222c" } }, y: { ticks: { color: "#8792a8" }, grid: { color: "#1c222c" } } },
+            },
+        });
+        const saldoHist = evolucaoSaldoAcumulado();
+        if (saldoHist.labels.length > 0) {
+            new w.Chart(canvasSaldo, {
+                type: "line",
+                data: { labels: saldoHist.labels, datasets: [{ label: "Saldo (MZN)", data: saldoHist.valores, borderColor: "#4f8cff", backgroundColor: "rgba(79,140,255,0.15)", fill: true, tension: 0.25 }] },
+                options: { plugins: { legend: { display: false } }, scales: { x: { ticks: { color: "#8792a8" }, grid: { color: "#1c222c" } }, y: { ticks: { color: "#8792a8" }, grid: { color: "#1c222c" } } } },
+            });
+        }
+    }
+    // Orçamento
+    container.appendChild(el("h3", { texto: "Orçamento mensal por categoria" }));
+    for (const cat of Object.keys(estado.categorias)) {
+        const existente = estado.orcamentos.find((o) => o.categoria === cat);
+        const gasto = (_a = porCategoriaMes[cat]) !== null && _a !== void 0 ? _a : 0;
+        const bloco = el("div", { classe: "card" });
+        const topoLinha = el("div", { classe: "linha-resumo" });
+        topoLinha.appendChild(el("span", { texto: cat }));
+        const inputLimite = el("input", { classe: "input-pequeno", attrs: { type: "number", min: "0", placeholder: "Limite MZN", value: existente ? String(existente.limiteMensal) : "" } });
+        inputLimite.addEventListener("change", () => {
+            const v = parseFloat(inputLimite.value);
+            if (!valorValido(v))
+                return;
+            const idx = estado.orcamentos.findIndex((o) => o.categoria === cat);
+            if (idx >= 0)
+                estado.orcamentos[idx].limiteMensal = v;
+            else
+                estado.orcamentos.push({ categoria: cat, limiteMensal: v });
+            guardarEstado(estado);
+            renderizarTudo();
+        });
+        topoLinha.appendChild(inputLimite);
+        bloco.appendChild(topoLinha);
+        if (existente && existente.limiteMensal > 0) {
+            const pct = Math.min(100, (gasto / existente.limiteMensal) * 100);
+            const barraFundo = el("div", { classe: "barra-fundo" });
+            const barra = el("div", { classe: pct >= 100 ? "barra-cheia excedido" : "barra-cheia" });
+            barra.style.width = pct + "%";
+            barraFundo.appendChild(barra);
+            bloco.appendChild(barraFundo);
+            bloco.appendChild(el("div", { classe: "transacao-nota", texto: `${formatarMoeda(gasto, "MZN")} de ${formatarMoeda(existente.limiteMensal, "MZN")}` }));
+        }
+        container.appendChild(bloco);
+    }
+}
+function resumoDespesasPorCategoriaMes(ano, mes) {
+    var _a;
+    const resultado = {};
+    for (const t of estado.transacoes) {
+        if (t.tipo !== "despesa")
+            continue;
+        const d = new Date(t.data);
+        if (d.getMonth() !== mes || d.getFullYear() !== ano)
+            continue;
+        const conta = estado.contas.find((c) => c.id === t.contaId);
+        const valorMZN = converterParaMZN(t.valor, conta ? conta.moeda : "MZN");
+        resultado[t.categoria] = ((_a = resultado[t.categoria]) !== null && _a !== void 0 ? _a : 0) + valorMZN;
+    }
+    return resultado;
+}
+function evolucaoMensal(nMeses) {
+    const labels = [];
+    const receitas = [];
+    const despesas = [];
+    for (let i = nMeses - 1; i >= 0; i--) {
+        const d = new Date(anoSel, mesSel - i, 1);
+        labels.push(`${MESES_ABREV[d.getMonth()].replace(".", "")}/${String(d.getFullYear()).slice(2)}`);
+        const r = resumoMes(d.getFullYear(), d.getMonth());
+        receitas.push(Math.round(r.receitas));
+        despesas.push(Math.round(r.despesas));
+    }
+    return { labels, receitas, despesas };
+}
+function evolucaoSaldoAcumulado() {
+    var _a, _b;
+    const ordenadas = [...estado.transacoes].sort((a, b) => a.data.localeCompare(b.data));
+    const saldoInicialTotal = estado.contas.reduce((acc, c) => acc + converterParaMZN(c.saldoInicial, c.moeda), 0);
+    const porDia = new Map();
+    for (const t of ordenadas) {
+        const conta = estado.contas.find((c) => c.id === t.contaId);
+        const valorMZN = converterParaMZN(t.valor, conta ? conta.moeda : "MZN");
+        const delta = t.tipo === "receita" ? valorMZN : -valorMZN;
+        porDia.set(t.data, ((_a = porDia.get(t.data)) !== null && _a !== void 0 ? _a : 0) + delta);
+    }
+    const dias = [...porDia.keys()].sort();
+    const labels = [];
+    const valores = [];
+    let acumulado = saldoInicialTotal;
+    for (const dia of dias) {
+        acumulado += (_b = porDia.get(dia)) !== null && _b !== void 0 ? _b : 0;
+        labels.push(dia.slice(5));
+        valores.push(Math.round(acumulado));
+    }
+    return { labels, valores };
+}
+/* ===================== Render: Metas ===================== */
+function renderMetas(container) {
+    const cabecalho = el("div", { classe: "cabecalho-secao" });
+    cabecalho.appendChild(el("h3", { texto: "As minhas metas" }));
+    const btnAdd = el("button", { classe: "btn-mais", texto: "+" });
+    btnAdd.addEventListener("click", () => abrirFormularioMeta());
+    cabecalho.appendChild(btnAdd);
+    container.appendChild(cabecalho);
+    if (estado.metas.length === 0) {
+        container.appendChild(el("p", { classe: "vazio", texto: "Ainda sem metas definidas. Toca em + para criar a primeira." }));
+    }
+    for (const m of estado.metas) {
+        const bloco = el("div", { classe: "card meta-card" });
+        const topoMeta = el("div", { classe: "meta-topo" });
+        if (m.imagem) {
+            topoMeta.appendChild(el("img", { classe: "meta-imagem", attrs: { src: m.imagem, alt: m.nome } }));
+        }
+        else {
+            const semImagem = el("div", { classe: "meta-imagem meta-imagem-vazia" });
+            semImagem.appendChild(iconeSvg("medalha"));
+            topoMeta.appendChild(semImagem);
+        }
+        const infoMeta = el("div", { classe: "meta-info" });
+        infoMeta.appendChild(el("div", { classe: "conta-nome", texto: m.nome }));
+        const pct = m.valorObjetivo > 0 ? Math.min(100, Math.round((m.valorAtual / m.valorObjetivo) * 100)) : 0;
+        infoMeta.appendChild(el("div", { classe: "meta-percentagem", texto: `${pct}% concluído` }));
+        topoMeta.appendChild(infoMeta);
+        const acoes = el("div", { classe: "item-acoes" });
+        const btnEditar = el("button", { classe: "icone-acao" });
+        btnEditar.appendChild(iconeSvg("lapis"));
+        btnEditar.addEventListener("click", () => abrirFormularioMeta(m));
+        acoes.appendChild(btnEditar);
+        const btnApagar = el("button", { classe: "icone-acao icone-apagar" });
+        btnApagar.appendChild(iconeSvg("lixo"));
+        btnApagar.addEventListener("click", () => {
+            if (!confirm(`Apagar a meta "${m.nome}"?`))
+                return;
+            estado.metas = estado.metas.filter((x) => x.id !== m.id);
+            guardarEstado(estado);
+            renderizarTudo();
+        });
+        acoes.appendChild(btnApagar);
+        topoMeta.appendChild(acoes);
+        bloco.appendChild(topoMeta);
+        const barraFundo = el("div", { classe: "barra-fundo" });
+        const barra = el("div", { classe: pct >= 100 ? "barra-cheia excedido" : "barra-cheia" });
+        barra.style.width = pct + "%";
+        barraFundo.appendChild(barra);
+        bloco.appendChild(barraFundo);
+        bloco.appendChild(el("div", { classe: "transacao-nota", texto: `${formatarMoeda(m.valorAtual, "MZN")} de ${formatarMoeda(m.valorObjetivo, "MZN")}` }));
+        container.appendChild(bloco);
+    }
+}
+function abrirFormularioMeta(metaExistente) {
+    abrirModal(metaExistente ? "Editar meta" : "Nova meta", (corpo) => {
+        var _a, _b;
+        let imagemSelecionada = (_a = metaExistente === null || metaExistente === void 0 ? void 0 : metaExistente.imagem) !== null && _a !== void 0 ? _a : "";
+        const previewWrap = el("div", { classe: "linha-foto" });
+        const preview = imagemSelecionada
+            ? el("img", { classe: "meta-imagem meta-imagem-preview", attrs: { src: imagemSelecionada, alt: "Pré-visualização" } })
+            : (() => { const d = el("div", { classe: "meta-imagem meta-imagem-vazia meta-imagem-preview" }); d.appendChild(iconeSvg("medalha")); return d; })();
+        previewWrap.appendChild(preview);
+        const inputFoto = el("input", { classe: "input-ficheiro-oculto", attrs: { type: "file", accept: "image/*", id: "input-foto-meta" } });
+        const btnFoto = el("label", { classe: "btn btn-secundario btn-foto", texto: "Escolher imagem", attrs: { for: "input-foto-meta" } });
+        inputFoto.addEventListener("change", () => {
+            const ficheiro = inputFoto.files && inputFoto.files[0];
+            if (!ficheiro)
+                return;
+            if (ficheiro.size > 2000000) {
+                alert("Escolhe uma imagem até 2MB.");
+                return;
+            }
+            const leitor = new FileReader();
+            leitor.onload = () => {
+                imagemSelecionada = String(leitor.result || "");
+                const novaPreview = el("img", { classe: "meta-imagem meta-imagem-preview", attrs: { src: imagemSelecionada, alt: "Pré-visualização" } });
+                preview.replaceWith(novaPreview);
+            };
+            leitor.readAsDataURL(ficheiro);
+        });
+        previewWrap.appendChild(inputFoto);
+        previewWrap.appendChild(btnFoto);
+        corpo.appendChild(previewWrap);
+        const inputNome = el("input", { classe: "input", attrs: { type: "text", placeholder: "Nome da meta", maxlength: "40", value: (_b = metaExistente === null || metaExistente === void 0 ? void 0 : metaExistente.nome) !== null && _b !== void 0 ? _b : "" } });
+        corpo.appendChild(inputNome);
+        const inputObjetivo = el("input", { classe: "input", attrs: { type: "number", placeholder: "Valor objetivo (MZN)", min: "0", value: metaExistente ? String(metaExistente.valorObjetivo) : "" } });
+        corpo.appendChild(inputObjetivo);
+        const inputAtual = el("input", { classe: "input", attrs: { type: "number", placeholder: "Valor já poupado (MZN)", min: "0", value: metaExistente ? String(metaExistente.valorAtual) : "0" } });
+        corpo.appendChild(inputAtual);
+        const btnGuardar = el("button", { classe: "btn btn-primario", texto: "Guardar" });
+        btnGuardar.addEventListener("click", () => {
+            var _a;
+            const nome = textoSeguro(inputNome.value, 40);
+            const objetivo = parseFloat(inputObjetivo.value);
+            const atual = parseFloat(inputAtual.value || "0");
+            if (!nome || !valorValido(objetivo) || objetivo <= 0 || !valorValido(atual)) {
+                alert("Preenche o nome e valores válidos.");
+                return;
+            }
+            if (metaExistente) {
+                metaExistente.nome = nome;
+                metaExistente.valorObjetivo = objetivo;
+                metaExistente.valorAtual = atual;
+                metaExistente.imagem = imagemSelecionada;
+            }
+            else {
+                estado.metas.push({ id: novoId(), nome, valorObjetivo: objetivo, valorAtual: atual, imagem: imagemSelecionada });
+            }
+            guardarEstado(estado);
+            (_a = document.querySelector(".overlay")) === null || _a === void 0 ? void 0 : _a.remove();
+            renderizarTudo();
+        });
+        corpo.appendChild(btnGuardar);
+    });
+}
+/* ===================== Render: Perfil ===================== */
+function renderPerfil(container) {
+    var _a;
+    if (perfilVista !== "menu") {
+        renderPerfilSubVista(container);
+        return;
+    }
+    const avatarGrande = renderAvatar("avatar-grande");
+    container.appendChild(avatarGrande);
+    const nomeEl = el("div", { classe: "nome-perfil", texto: estado.nomeUsuario });
+    container.appendChild(nomeEl);
+    if (ehPremium()) {
+        const nomesPlano = { semanal: "Semanal", quinzenal: "Quinzenal", mensal: "Mensal" };
+        let texto = `✅ Premium (${(_a = nomesPlano[estado.plano]) !== null && _a !== void 0 ? _a : estado.plano}) ativo`;
+        if (estado.planoExpiraEm) {
+            const d = new Date(estado.planoExpiraEm);
+            texto += ` até ${d.toLocaleDateString("pt-MZ")}`;
+        }
+        container.appendChild(el("div", { classe: "pill-premium-ativo", texto }));
+    }
+    else {
+        const btnPremium = el("button", { classe: "btn-premium-verde", texto: "Quero ser Premium 👑" });
+        btnPremium.addEventListener("click", () => abrirModalPremium());
+        container.appendChild(btnPremium);
+    }
+    container.appendChild(el("h3", { texto: "Minha conta" }));
+    container.appendChild(linhaPerfil("Informações pessoais", "user", "info"));
+    container.appendChild(el("h3", { texto: "Cadastros" }));
+    container.appendChild(linhaPerfil("Meus cartões", "cartao", "cartoes"));
+    container.appendChild(linhaPerfil("Minhas contas", "carteira", "contas"));
+    container.appendChild(linhaPerfil("Minhas categorias", "grelha", "categorias"));
+    container.appendChild(linhaPerfil("Minhas subcategorias", "losango", "subcategorias"));
+    container.appendChild(linhaPerfil("Câmbio", "cambio", "cambio"));
+    container.appendChild(el("h3", { texto: "Dados" }));
+    container.appendChild(linhaPerfil("Exportar / apagar dados", "engrenagem", "dados"));
+    if (sessaoAtual) {
+        container.appendChild(el("h3", { texto: "Conta" }));
+        container.appendChild(el("p", { classe: "vazio", texto: `Sessão iniciada como ${sessaoAtual.email}` }));
+        const btnSair = el("button", { classe: "btn btn-perigo", texto: "Terminar sessão" });
+        btnSair.addEventListener("click", () => terminarSessao());
+        container.appendChild(btnSair);
+    }
+}
+function linhaPerfil(label, icone, destino) {
+    const linha = el("div", { classe: "linha-perfil" });
+    linha.appendChild(iconeSvg(icone));
+    linha.appendChild(el("div", { classe: "linha-perfil-texto", texto: label }));
+    const seta = iconeSvg("seta");
+    seta.classList.add("seta-perfil");
+    linha.appendChild(seta);
+    linha.addEventListener("click", () => { perfilVista = destino; renderizarTudo(); });
+    return linha;
+}
+function botaoVoltar() {
+    const btn = el("button", { classe: "btn-voltar", texto: "‹ Voltar" });
+    btn.addEventListener("click", () => { perfilVista = "menu"; renderizarTudo(); });
+    return btn;
+}
+function renderPerfilSubVista(container) {
+    container.appendChild(botaoVoltar());
+    if (perfilVista === "info") {
+        container.appendChild(el("h3", { texto: "Informações pessoais" }));
+        const linhaFoto = el("div", { classe: "linha-foto" });
+        const previewFoto = renderAvatar("avatar-grande avatar-pequeno-preview");
+        linhaFoto.appendChild(previewFoto);
+        const inputFoto = el("input", { classe: "input-ficheiro-oculto", attrs: { type: "file", accept: "image/*", id: "input-foto" } });
+        const btnFoto = el("label", { classe: "btn btn-secundario btn-foto", texto: "Alterar foto", attrs: { for: "input-foto" } });
+        inputFoto.addEventListener("change", () => {
+            const ficheiro = inputFoto.files && inputFoto.files[0];
+            if (!ficheiro)
+                return;
+            if (ficheiro.size > 2000000) {
+                alert("Escolhe uma imagem até 2MB.");
+                return;
+            }
+            const leitor = new FileReader();
+            leitor.onload = () => {
+                estado.foto = String(leitor.result || "");
+                guardarEstado(estado);
+                renderizarTudo();
+                perfilVista = "info";
+            };
+            leitor.readAsDataURL(ficheiro);
+        });
+        linhaFoto.appendChild(inputFoto);
+        linhaFoto.appendChild(btnFoto);
+        if (estado.foto) {
+            const btnRemover = el("button", { classe: "btn-apagar-mini", texto: "Remover foto" });
+            btnRemover.addEventListener("click", () => { estado.foto = ""; guardarEstado(estado); renderizarTudo(); perfilVista = "info"; });
+            linhaFoto.appendChild(btnRemover);
+        }
+        container.appendChild(linhaFoto);
+        container.appendChild(el("div", { classe: "rotulo-campo", texto: "Nome" }));
+        const inputNome = el("input", { classe: "input", attrs: { type: "text", value: estado.nomeUsuario, maxlength: "40" } });
+        container.appendChild(inputNome);
+        container.appendChild(el("div", { classe: "rotulo-campo", texto: "Email" }));
+        const inputEmail = el("input", { classe: "input", attrs: { type: "email", value: estado.email, maxlength: "60", placeholder: "teu@email.com" } });
+        container.appendChild(inputEmail);
+        container.appendChild(el("div", { classe: "rotulo-campo", texto: "Número de telefone" }));
+        const inputTelefone = el("input", { classe: "input", attrs: { type: "tel", value: estado.telefone, maxlength: "20", placeholder: "84/82/86/87... 123 4567" } });
+        container.appendChild(inputTelefone);
+        const btnSalvar = el("button", { classe: "btn btn-primario", texto: "Guardar" });
+        btnSalvar.addEventListener("click", () => {
+            estado.nomeUsuario = textoSeguro(inputNome.value || "Utilizador", 40);
+            estado.email = textoSeguro(inputEmail.value, 60);
+            estado.telefone = textoSeguro(inputTelefone.value, 20);
+            guardarEstado(estado);
+            renderizarTudo();
+        });
+        container.appendChild(btnSalvar);
+        return;
+    }
+    if (perfilVista === "cartoes") {
+        container.appendChild(el("h3", { texto: "Meus cartões" }));
+        if (estado.cartoes.length === 0)
+            container.appendChild(el("p", { classe: "vazio", texto: "Nenhum cartão adicionado." }));
+        for (const c of estado.cartoes)
+            container.appendChild(itemCartao(c));
+        const btnAdd = el("button", { classe: "btn btn-primario", texto: "+ Adicionar cartão" });
+        btnAdd.addEventListener("click", () => abrirFormularioCartao());
+        container.appendChild(btnAdd);
+        return;
+    }
+    if (perfilVista === "contas") {
+        container.appendChild(el("h3", { texto: "Minhas contas" }));
+        if (estado.contas.length === 0)
+            container.appendChild(el("p", { classe: "vazio", texto: "Nenhuma conta adicionada." }));
+        for (const c of estado.contas)
+            container.appendChild(itemConta(c));
+        const btnAdd = el("button", { classe: "btn btn-primario", texto: "+ Adicionar conta" });
+        btnAdd.addEventListener("click", () => abrirFormularioConta());
+        container.appendChild(btnAdd);
+        return;
+    }
+    if (perfilVista === "categorias") {
+        container.appendChild(el("h3", { texto: "Minhas categorias" }));
+        for (const cat of Object.keys(estado.categorias)) {
+            const linha = el("div", { classe: "linha-resumo" });
+            linha.appendChild(el("span", { texto: cat }));
+            const btnDel = el("button", { classe: "btn-apagar-mini", texto: "Apagar" });
+            btnDel.addEventListener("click", () => {
+                if (confirm(`Apagar a categoria "${cat}"?`)) {
+                    delete estado.categorias[cat];
+                    guardarEstado(estado);
+                    renderizarTudo();
+                }
+            });
+            linha.appendChild(btnDel);
+            container.appendChild(linha);
+        }
+        const inputNova = el("input", { classe: "input", attrs: { type: "text", placeholder: "Nova categoria", maxlength: "30" } });
+        container.appendChild(inputNova);
+        const btnAdd = el("button", { classe: "btn btn-primario", texto: "+ Adicionar categoria" });
+        btnAdd.addEventListener("click", () => {
+            const nome = textoSeguro(inputNova.value, 30);
+            if (!nome)
+                return;
+            if (!estado.categorias[nome])
+                estado.categorias[nome] = [];
+            guardarEstado(estado);
+            renderizarTudo();
+        });
+        container.appendChild(btnAdd);
+        return;
+    }
+    if (perfilVista === "subcategorias") {
+        container.appendChild(el("h3", { texto: "Minhas subcategorias" }));
+        const selCat = el("select", { classe: "select" });
+        for (const cat of Object.keys(estado.categorias))
+            selCat.appendChild(el("option", { texto: cat, attrs: { value: cat } }));
+        container.appendChild(selCat);
+        const listaSub = el("div", { classe: "lista-transacoes" });
+        container.appendChild(listaSub);
+        const inputNova = el("input", { classe: "input", attrs: { type: "text", placeholder: "Nova subcategoria", maxlength: "30" } });
+        const btnAdd = el("button", { classe: "btn btn-primario", texto: "+ Adicionar subcategoria" });
+        const atualizarLista = () => {
+            var _a;
+            limpar(listaSub);
+            const subs = (_a = estado.categorias[selCat.value]) !== null && _a !== void 0 ? _a : [];
+            if (subs.length === 0)
+                listaSub.appendChild(el("p", { classe: "vazio", texto: "Sem subcategorias ainda." }));
+            for (const s of subs) {
+                const linha = el("div", { classe: "linha-resumo" });
+                linha.appendChild(el("span", { texto: s }));
+                const btnDel = el("button", { classe: "btn-apagar-mini", texto: "Apagar" });
+                btnDel.addEventListener("click", () => {
+                    estado.categorias[selCat.value] = subs.filter((x) => x !== s);
+                    guardarEstado(estado);
+                    atualizarLista();
+                });
+                linha.appendChild(btnDel);
+                listaSub.appendChild(linha);
+            }
+        };
+        selCat.addEventListener("change", atualizarLista);
+        atualizarLista();
+        btnAdd.addEventListener("click", () => {
+            var _a;
+            const nome = textoSeguro(inputNova.value, 30);
+            if (!nome)
+                return;
+            const atual = (_a = estado.categorias[selCat.value]) !== null && _a !== void 0 ? _a : [];
+            if (!atual.includes(nome))
+                estado.categorias[selCat.value] = [...atual, nome];
+            guardarEstado(estado);
+            inputNova.value = "";
+            atualizarLista();
+        });
+        container.appendChild(inputNova);
+        container.appendChild(btnAdd);
+        return;
+    }
+    if (perfilVista === "cambio") {
+        container.appendChild(el("h3", { texto: "Taxas de câmbio (manual)" }));
+        ["USD", "ZAR", "EUR"].forEach((m) => {
+            const linha = el("div", { classe: "linha-resumo" });
+            linha.appendChild(el("span", { texto: `1 ${m} = ? MZN` }));
+            const input = el("input", { classe: "input-pequeno", attrs: { type: "number", min: "0", value: String(estado.taxas[m]) } });
+            input.addEventListener("change", () => {
+                const v = parseFloat(input.value);
+                if (!valorValido(v))
+                    return;
+                estado.taxas[m] = v;
+                guardarEstado(estado);
+            });
+            linha.appendChild(input);
+            container.appendChild(linha);
+        });
+        container.appendChild(el("h3", { texto: "Conversor rápido" }));
+        const inputValor = el("input", { classe: "input", attrs: { type: "number", min: "0", placeholder: "Valor" } });
+        const selMoeda = el("select", { classe: "select" });
+        ["MZN", "USD", "ZAR", "EUR"].forEach((m) => selMoeda.appendChild(el("option", { texto: m, attrs: { value: m } })));
+        const resultado = el("div", { classe: "valor-grande", texto: "—" });
+        const calcular = () => {
+            const v = parseFloat(inputValor.value);
+            if (!valorValido(v)) {
+                resultado.textContent = "—";
+                return;
+            }
+            resultado.textContent = formatarMoeda(converterParaMZN(v, selMoeda.value), "MZN");
+        };
+        inputValor.addEventListener("input", calcular);
+        selMoeda.addEventListener("change", calcular);
+        container.appendChild(inputValor);
+        container.appendChild(selMoeda);
+        container.appendChild(resultado);
+        return;
+    }
+    if (perfilVista === "dados") {
+        container.appendChild(el("h3", { texto: "Dados" }));
+        const btnExportar = el("button", { classe: "btn btn-secundario", texto: "Exportar dados (JSON)" });
+        btnExportar.addEventListener("click", exportarDadosJSON);
+        container.appendChild(btnExportar);
+        const btnLimpar = el("button", { classe: "btn btn-perigo", texto: "Apagar todos os dados" });
+        btnLimpar.addEventListener("click", () => {
+            if (confirm("Isto vai apagar todos os dados guardados neste dispositivo. Continuar?")) {
+                estado = estadoPadrao();
+                guardarEstado(estado);
+                perfilVista = "menu";
+                renderizarTudo();
+            }
+        });
+        container.appendChild(btnLimpar);
+        return;
+    }
+}
+function abrirModalPremium() {
+    abrirModal("Torna-te Premium", (corpo) => {
+        corpo.appendChild(el("p", { classe: "vazio", texto: "Contas ilimitadas, relatórios avançados, exportação e metas ilimitadas." }));
+        const btnSemanal = el("button", { classe: "btn btn-primario", texto: "Semanal — 89 MT/semana" });
+        btnSemanal.addEventListener("click", () => iniciarCheckout("semanal"));
+        corpo.appendChild(btnSemanal);
+        const btnQuinzenal = el("button", { classe: "btn btn-secundario", texto: "Quinzenal — 169 MT/2 semanas" });
+        btnQuinzenal.addEventListener("click", () => iniciarCheckout("quinzenal"));
+        corpo.appendChild(btnQuinzenal);
+        const btnMensal = el("button", { classe: "btn btn-secundario", texto: "Mensal — 249 MT/mês" });
+        btnMensal.addEventListener("click", () => iniciarCheckout("mensal"));
+        corpo.appendChild(btnMensal);
+    });
+}
+function iniciarCheckout(periodo) {
+    const links = {
+        semanal: "https://checkout.escalepay.com/5802046",
+        quinzenal: "https://checkout.escalepay.com/6790611",
+        mensal: "https://checkout.escalepay.com/3572534",
+    };
+    const link = links[periodo];
+    if (!link) {
+        alert("O link de pagamento do plano mensal ainda não foi configurado. Passa-o ao Claude para o ligar aqui.");
+        return;
+    }
+    window.open(link, "_blank");
+    alert("Depois de pagares, o teu plano Premium é ativado manualmente por agora (até teres o webhook automático ligado).");
+}
+function exportarDadosJSON() {
+    const blob = new Blob([JSON.stringify(estado, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = el("a", { attrs: { href: url, download: "meusaldo-dados.json" } });
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+}
+/* ===================== Modais / Formulários ===================== */
+function abrirModal(titulo, montar) {
+    const overlay = el("div", { classe: "overlay" });
+    const modal = el("div", { classe: "modal" });
+    const cabecalho = el("div", { classe: "modal-cabecalho" });
+    cabecalho.appendChild(el("h3", { texto: titulo }));
+    const btnFechar = el("button", { classe: "btn-fechar", texto: "×" });
+    btnFechar.addEventListener("click", () => overlay.remove());
+    cabecalho.appendChild(btnFechar);
+    modal.appendChild(cabecalho);
+    const corpo = el("div", { classe: "modal-corpo" });
+    modal.appendChild(corpo);
+    montar(corpo);
+    overlay.appendChild(modal);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay)
+        overlay.remove(); });
+    document.body.appendChild(overlay);
+}
+function abrirFormularioConta(contaExistente) {
+    abrirModal(contaExistente ? "Editar conta" : "Nova conta / carteira", (corpo) => {
+        var _a;
+        const inputNome = el("input", { classe: "input", attrs: { type: "text", placeholder: "Nome (ex.: Conta principal)", maxlength: "40", value: (_a = contaExistente === null || contaExistente === void 0 ? void 0 : contaExistente.nome) !== null && _a !== void 0 ? _a : "" } });
+        corpo.appendChild(inputNome);
+        const selTipo = el("select", { classe: "select" });
+        for (const b of BANCOS)
+            selTipo.appendChild(el("option", { texto: b.label, attrs: { value: b.tipo } }));
+        if (contaExistente)
+            selTipo.value = contaExistente.tipo;
+        corpo.appendChild(selTipo);
+        const selMoeda = el("select", { classe: "select" });
+        ["MZN", "USD", "ZAR", "EUR"].forEach((m) => selMoeda.appendChild(el("option", { texto: m, attrs: { value: m } })));
+        if (contaExistente)
+            selMoeda.value = contaExistente.moeda;
+        corpo.appendChild(selMoeda);
+        const inputSaldo = el("input", { classe: "input", attrs: { type: "number", placeholder: "Saldo inicial", min: "0", value: contaExistente ? String(contaExistente.saldoInicial) : "" } });
+        corpo.appendChild(inputSaldo);
+        const btnGuardar = el("button", { classe: "btn btn-primario", texto: "Guardar" });
+        btnGuardar.addEventListener("click", () => {
+            var _a;
+            const nome = textoSeguro(inputNome.value || "Conta");
+            const saldoInicial = parseFloat(inputSaldo.value || "0");
+            if (!valorValido(saldoInicial)) {
+                alert("Saldo inicial inválido.");
+                return;
+            }
+            if (contaExistente) {
+                contaExistente.nome = nome;
+                contaExistente.tipo = selTipo.value;
+                contaExistente.moeda = selMoeda.value;
+                contaExistente.saldoInicial = saldoInicial;
+            }
+            else {
+                if (!ehPremium() && estado.contas.length >= 1) {
+                    alert("O plano gratuito permite apenas 1 conta. Faz upgrade para Premium para adicionar mais.");
+                    return;
+                }
+                estado.contas.push({ id: novoId(), nome, tipo: selTipo.value, moeda: selMoeda.value, saldoInicial });
+            }
+            guardarEstado(estado);
+            (_a = document.querySelector(".overlay")) === null || _a === void 0 ? void 0 : _a.remove();
+            renderizarTudo();
+        });
+        corpo.appendChild(btnGuardar);
+    });
+}
+function abrirFormularioCartao(cartaoExistente) {
+    abrirModal(cartaoExistente ? "Editar cartão" : "Novo cartão", (corpo) => {
+        var _a;
+        const inputNome = el("input", { classe: "input", attrs: { type: "text", placeholder: "Nome do cartão", maxlength: "40", value: (_a = cartaoExistente === null || cartaoExistente === void 0 ? void 0 : cartaoExistente.nome) !== null && _a !== void 0 ? _a : "" } });
+        corpo.appendChild(inputNome);
+        const selBandeira = el("select", { classe: "select" });
+        for (const b of BANDEIRAS)
+            selBandeira.appendChild(el("option", { texto: b.label, attrs: { value: b.valor } }));
+        if (cartaoExistente)
+            selBandeira.value = cartaoExistente.bandeira;
+        corpo.appendChild(selBandeira);
+        const inputDia = el("input", { classe: "input", attrs: { type: "number", placeholder: "Dia de vencimento (1-31)", min: "1", max: "31", value: cartaoExistente ? String(cartaoExistente.diaVencimento) : "" } });
+        corpo.appendChild(inputDia);
+        const inputSaldo = el("input", { classe: "input", attrs: { type: "number", placeholder: "Saldo/fatura atual (MZN)", min: "0", value: cartaoExistente ? String(cartaoExistente.saldoAtual) : "" } });
+        corpo.appendChild(inputSaldo);
+        const btnGuardar = el("button", { classe: "btn btn-primario", texto: "Guardar" });
+        btnGuardar.addEventListener("click", () => {
+            var _a;
+            const nome = textoSeguro(inputNome.value || "Cartão");
+            const dia = Math.max(1, Math.min(31, parseInt(inputDia.value || "1", 10)));
+            const saldo = parseFloat(inputSaldo.value || "0");
+            if (!valorValido(saldo)) {
+                alert("Saldo inválido.");
+                return;
+            }
+            if (cartaoExistente) {
+                cartaoExistente.nome = nome;
+                cartaoExistente.bandeira = selBandeira.value;
+                cartaoExistente.diaVencimento = dia;
+                cartaoExistente.saldoAtual = saldo;
+            }
+            else {
+                estado.cartoes.push({ id: novoId(), nome, bandeira: selBandeira.value, diaVencimento: dia, saldoAtual: saldo });
+            }
+            guardarEstado(estado);
+            (_a = document.querySelector(".overlay")) === null || _a === void 0 ? void 0 : _a.remove();
+            renderizarTudo();
+        });
+        corpo.appendChild(btnGuardar);
+    });
+}
+function valoresWizardPadrao() {
+    var _a;
+    var _b, _c;
+    return {
+        tipo: "despesa",
+        passo: -1,
+        valor: 0,
+        titulo: "",
+        categoria: (_b = Object.keys(estado.categorias)[0]) !== null && _b !== void 0 ? _b : "Outros",
+        subcategoria: "",
+        classificacao: "nao_essencial",
+        data: new Date().toISOString().slice(0, 10),
+        parcelada: false,
+        parcelas: 2,
+        recorrente: false,
+        contaId: (_c = (_a = estado.contas[0]) === null || _a === void 0 ? void 0 : _a.id) !== null && _c !== void 0 ? _c : "",
+        contaDestinoId: "",
+        cartaoId: "",
+        jaPago: true,
+    };
+}
+let wiz = valoresWizardPadrao();
+let calcAtual = "0";
+let calcTokens = [];
+let wizOverlay = null;
+let wizCorpo = null;
+function abrirFluxoTransacao() {
+    if (estado.contas.length === 0) {
+        alert("Adiciona primeiro uma conta ou carteira.");
+        return;
+    }
+    wiz = valoresWizardPadrao();
+    const overlay = el("div", { classe: "overlay" });
+    const modal = el("div", { classe: "modal modal-wizard" });
+    modal.appendChild(el("div", { classe: "modal-alca" }));
+    const corpo = el("div", { classe: "modal-corpo" });
+    modal.appendChild(corpo);
+    overlay.appendChild(modal);
+    overlay.addEventListener("click", (e) => { if (e.target === overlay)
+        fecharWizard(); });
+    document.body.appendChild(overlay);
+    wizOverlay = overlay;
+    wizCorpo = corpo;
+    renderPassoWizard();
+}
+function fecharWizard() {
+    wizOverlay === null || wizOverlay === void 0 ? void 0 : wizOverlay.remove();
+    wizOverlay = null;
+    wizCorpo = null;
+}
+function wizardTitulo(normal, negrito) {
+    const div = el("div", { classe: "wizard-titulo" });
+    div.appendChild(document.createTextNode(normal));
+    const forte = el("strong", { texto: negrito });
+    div.appendChild(forte);
+    return div;
+}
+function botaoVoltarWizard() {
+    const btn = el("button", { classe: "btn btn-secundario", texto: "voltar" });
+    btn.addEventListener("click", () => {
+        wiz.passo -= 1;
+        if (wiz.passo < -1) {
+            fecharWizard();
+            return;
+        }
+        renderPassoWizard();
+    });
+    return btn;
+}
+function wizardToggleLinha(icone, label, valor, onChange) {
+    const linha = el("div", { classe: "wizard-toggle-linha" });
+    const esquerda = el("div", { classe: "wizard-toggle-esquerda" });
+    esquerda.appendChild(iconeSvg(icone));
+    esquerda.appendChild(el("span", { texto: label }));
+    linha.appendChild(esquerda);
+    const swtch = el("div", { classe: valor ? "wizard-switch ativo" : "wizard-switch" });
+    swtch.appendChild(el("div", { classe: "wizard-switch-bola" }));
+    swtch.addEventListener("click", () => onChange(!valor));
+    linha.appendChild(swtch);
+    return linha;
+}
+function selectDeContas(selecionada) {
+    const sel = el("select", { classe: "select" });
+    for (const c of estado.contas)
+        sel.appendChild(el("option", { texto: c.nome, attrs: { value: c.id } }));
+    if (selecionada)
+        sel.value = selecionada;
+    return sel;
+}
+function renderPassoWizard() {
+    if (!wizCorpo)
+        return;
+    limpar(wizCorpo);
+    if (wiz.passo === -1)
+        renderPassoEscolhaTipo(wizCorpo);
+    else if (wiz.passo === 0)
+        renderPassoValor(wizCorpo);
+    else if (wiz.passo === 1)
+        renderPassoTituloCategoria(wizCorpo);
+    else if (wiz.passo === 2)
+        renderPassoData(wizCorpo);
+    else if (wiz.passo === 3)
+        renderPassoContaCartao(wizCorpo);
+}
+function renderPassoEscolhaTipo(corpo) {
+    corpo.appendChild(wizardTitulo("o que queres ", "registar?"));
+    const linha = el("div", { classe: "wizard-opcoes" });
+    const opcoes = [
+        { tipo: "despesa", l1: "adicionar", l2: "despesa", icone: "seta-baixo", cor: "#ef4444" },
+        { tipo: "transferencia", l1: "criar uma", l2: "transferência", icone: "trans", cor: "#4f8cff" },
+        { tipo: "receita", l1: "adicionar", l2: "receita", icone: "seta-cima", cor: "#21c55d" },
+    ];
+    for (const op of opcoes) {
+        const card = el("button", { classe: "wizard-opcao-card" });
+        const circulo = el("div", { classe: "wizard-opcao-icone" });
+        circulo.style.borderColor = op.cor;
+        circulo.style.color = op.cor;
+        circulo.appendChild(iconeSvg(op.icone));
+        card.appendChild(circulo);
+        card.appendChild(el("div", { classe: "wizard-opcao-label1", texto: op.l1 }));
+        card.appendChild(el("div", { classe: "wizard-opcao-label2", texto: op.l2 }));
+        card.addEventListener("click", () => { wiz.tipo = op.tipo; wiz.passo = 0; renderPassoWizard(); });
+        linha.appendChild(card);
+    }
+    corpo.appendChild(linha);
+}
+function fmtCalc(v) {
+    return (Math.round(v * 100) / 100).toString().replace(".", ",");
+}
+function aplicarOp(a, op, b) {
+    switch (op) {
+        case "+": return a + b;
+        case "-": return a - b;
+        case "\u00d7": return a * b;
+        case "\u00f7": return b !== 0 ? a / b : 0;
+        case "%": return a * (b / 100);
+        default: return b;
+    }
+}
+function calcularTotal() {
+    const atualNum = parseFloat(calcAtual.replace(",", ".")) || 0;
+    if (calcTokens.length === 0)
+        return atualNum;
+    let total = calcTokens[0].valor;
+    for (let i = 0; i < calcTokens.length; i++) {
+        const proximo = i + 1 < calcTokens.length ? calcTokens[i + 1].valor : atualNum;
+        total = aplicarOp(total, calcTokens[i].op, proximo);
+    }
+    return total;
+}
+function renderPassoValor(corpo) {
+    calcAtual = wiz.valor > 0 ? fmtCalc(wiz.valor) : "0";
+    calcTokens = [];
+    const pergunta = wiz.tipo === "despesa" ? "sua despesa" : wiz.tipo === "receita" ? "sua receita" : "a transferência";
+    corpo.appendChild(wizardTitulo("qual o valor da ", pergunta + "?"));
+    const linhaValor = el("div", { classe: "wizard-valor-linha" });
+    linhaValor.appendChild(el("span", { classe: "wizard-valor-prefixo", texto: "MT" }));
+    const displayValor = el("span", { classe: "wizard-valor-display", texto: calcAtual });
+    linhaValor.appendChild(displayValor);
+    corpo.appendChild(linhaValor);
+    const displayExpressao = el("div", { classe: "wizard-expressao", texto: "" });
+    corpo.appendChild(displayExpressao);
+    const teclas = [
+        ["%", "\u00f7", "\u00d7", "\u232b"],
+        ["7", "8", "9", "-"],
+        ["4", "5", "6", "+"],
+        ["1", "2", "3", "\u2713"],
+        ["AC", "0", ",", ""],
+    ];
+    const grelha = el("div", { classe: "wizard-calc-grelha" });
+    for (const linha of teclas) {
+        for (const tecla of linha) {
+            if (tecla === "") {
+                grelha.appendChild(el("div", { classe: "wizard-calc-vazio" }));
+                continue;
+            }
+            const classeExtra = tecla === "\u2713" ? " wizard-calc-confirmar" : ["+", "-", "\u00d7", "\u00f7", "%"].includes(tecla) ? " wizard-calc-op" : "";
+            const btn = el("button", { classe: "wizard-calc-tecla" + classeExtra, texto: tecla });
+            btn.addEventListener("click", () => processarTeclaCalc(tecla, displayValor, displayExpressao));
+            grelha.appendChild(btn);
+        }
+    }
+    corpo.appendChild(grelha);
+    corpo.appendChild(botaoVoltarWizard());
+}
+function processarTeclaCalc(tecla, displayValor, displayExpressao) {
+    if (tecla === "AC") {
+        calcAtual = "0";
+        calcTokens = [];
+    }
+    else if (tecla === "\u232b") {
+        calcAtual = calcAtual.length > 1 ? calcAtual.slice(0, -1) : "0";
+    }
+    else if (tecla === ",") {
+        if (!calcAtual.includes(","))
+            calcAtual += ",";
+    }
+    else if (["+", "-", "\u00d7", "\u00f7", "%"].includes(tecla)) {
+        calcTokens.push({ valor: parseFloat(calcAtual.replace(",", ".")) || 0, op: tecla });
+        calcAtual = "0";
+    }
+    else if (tecla === "\u2713") {
+        const total = calcularTotal();
+        if (!valorValido(total) || total <= 0) {
+            alert("Indica um valor válido.");
+            return;
+        }
+        wiz.valor = total;
+        wiz.passo = 1;
+        renderPassoWizard();
+        return;
+    }
+    else {
+        calcAtual = calcAtual === "0" ? tecla : calcAtual + tecla;
+    }
+    displayValor.textContent = calcAtual;
+    displayExpressao.textContent = calcTokens.map((t) => `${fmtCalc(t.valor)} ${t.op}`).join("  ");
+}
+function renderPassoTituloCategoria(corpo) {
+    corpo.appendChild(wizardTitulo("agora, ", "título e categoria"));
+    corpo.appendChild(el("div", { classe: "rotulo-campo", texto: "título" }));
+    const inputTitulo = el("input", { classe: "input", attrs: { type: "text", placeholder: "título", maxlength: "60", value: wiz.titulo } });
+    corpo.appendChild(inputTitulo);
+    corpo.appendChild(el("div", { classe: "rotulo-campo", texto: "categoria" }));
+    const selCategoria = el("select", { classe: "select" });
+    for (const cat of Object.keys(estado.categorias))
+        selCategoria.appendChild(el("option", { texto: cat, attrs: { value: cat } }));
+    selCategoria.value = wiz.categoria;
+    corpo.appendChild(selCategoria);
+    if (wiz.tipo === "despesa") {
+        corpo.appendChild(el("div", { classe: "rotulo-campo", texto: "tipo de despesa" }));
+        const segmentado = el("div", { classe: "wizard-segmentado" });
+        const opcoes = [["nao_essencial", "não essencial"], ["essencial", "essencial"], ["investimento", "investimento"]];
+        for (const [valor, label] of opcoes) {
+            const botao = el("button", { classe: wiz.classificacao === valor ? "wizard-segmento ativo" : "wizard-segmento", texto: label });
+            botao.addEventListener("click", () => { wiz.classificacao = valor; renderPassoWizard(); });
+            segmentado.appendChild(botao);
+        }
+        corpo.appendChild(segmentado);
+    }
+    const btnAvancar = el("button", { classe: "btn btn-primario", texto: "avançar" });
+    btnAvancar.addEventListener("click", () => {
+        var _a, _b;
+        wiz.titulo = textoSeguro(inputTitulo.value, 60);
+        wiz.categoria = selCategoria.value;
+        wiz.subcategoria = (_b = ((_a = estado.categorias[wiz.categoria]) !== null && _a !== void 0 ? _a : [])[0]) !== null && _b !== void 0 ? _b : "—";
+        wiz.passo = 2;
+        renderPassoWizard();
+    });
+    corpo.appendChild(btnAvancar);
+    corpo.appendChild(botaoVoltarWizard());
+}
+function renderPassoData(corpo) {
+    corpo.appendChild(wizardTitulo("qual a ", "data?"));
+    const inputData = el("input", { classe: "input", attrs: { type: "date", value: wiz.data } });
+    corpo.appendChild(inputData);
+    if (wiz.tipo !== "transferencia") {
+        corpo.appendChild(wizardToggleLinha("repetir", "ela é parcelada?", wiz.parcelada, (v) => {
+            wiz.parcelada = v;
+            if (v)
+                wiz.recorrente = false;
+            renderPassoWizard();
+        }));
+        if (wiz.parcelada) {
+            const inputParcelas = el("input", { classe: "input", attrs: { type: "number", min: "2", max: "60", placeholder: "Número de parcelas", value: String(wiz.parcelas) } });
+            inputParcelas.addEventListener("change", () => { wiz.parcelas = Math.max(2, Math.min(60, parseInt(inputParcelas.value || "2", 10))); });
+            corpo.appendChild(inputParcelas);
+        }
+        corpo.appendChild(wizardToggleLinha("repetir", "ela é recorrente?", wiz.recorrente, (v) => {
+            wiz.recorrente = v;
+            if (v)
+                wiz.parcelada = false;
+            renderPassoWizard();
+        }));
+    }
+    const btnAvancar = el("button", { classe: "btn btn-primario", texto: "avançar" });
+    btnAvancar.addEventListener("click", () => {
+        wiz.data = inputData.value || wiz.data;
+        wiz.passo = 3;
+        renderPassoWizard();
+    });
+    corpo.appendChild(btnAvancar);
+    corpo.appendChild(botaoVoltarWizard());
+}
+function renderPassoContaCartao(corpo) {
+    var _a;
+    var _b;
+    if (wiz.tipo === "transferencia") {
+        corpo.appendChild(wizardTitulo("por último, ", "as contas"));
+        corpo.appendChild(el("div", { classe: "rotulo-campo", texto: "conta de origem" }));
+        const selOrigem = selectDeContas(wiz.contaId);
+        corpo.appendChild(selOrigem);
+        corpo.appendChild(el("div", { classe: "rotulo-campo", texto: "conta de destino" }));
+        const outraPadrao = (_b = (_a = estado.contas.find((c) => c.id !== selOrigem.value)) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : "";
+        const selDestino = selectDeContas(wiz.contaDestinoId || outraPadrao);
+        corpo.appendChild(selDestino);
+        const btnSalvar = el("button", { classe: "btn btn-primario", texto: "salvar" });
+        btnSalvar.addEventListener("click", () => {
+            if (selOrigem.value === selDestino.value) {
+                alert("Escolhe duas contas diferentes.");
+                return;
+            }
+            wiz.contaId = selOrigem.value;
+            wiz.contaDestinoId = selDestino.value;
+            confirmarTransferencia();
+        });
+        corpo.appendChild(btnSalvar);
+        corpo.appendChild(botaoVoltarWizard());
+        return;
+    }
+    corpo.appendChild(wizardTitulo("por último, ", "conta e cartão"));
+    corpo.appendChild(el("div", { classe: "rotulo-campo", texto: "conta bancária" }));
+    const selConta = selectDeContas(wiz.contaId);
+    corpo.appendChild(selConta);
+    corpo.appendChild(el("div", { classe: "rotulo-campo", texto: "cartão de crédito (opcional)" }));
+    const selCartao = el("select", { classe: "select" });
+    selCartao.appendChild(el("option", { texto: "Nenhum", attrs: { value: "" } }));
+    for (const c of estado.cartoes)
+        selCartao.appendChild(el("option", { texto: c.nome, attrs: { value: c.id } }));
+    selCartao.value = wiz.cartaoId;
+    corpo.appendChild(selCartao);
+    corpo.appendChild(wizardToggleLinha("check", "já paguei", wiz.jaPago, (v) => { wiz.jaPago = v; renderPassoWizard(); }));
+    const btnSalvar = el("button", { classe: "btn btn-primario", texto: "salvar" });
+    btnSalvar.addEventListener("click", () => {
+        wiz.contaId = selConta.value;
+        wiz.cartaoId = selCartao.value;
+        confirmarTransacaoSimples();
+    });
+    corpo.appendChild(btnSalvar);
+    corpo.appendChild(botaoVoltarWizard());
+}
+function confirmarTransacaoSimples() {
+    const base = {
+        contaId: wiz.contaId,
+        cartaoId: wiz.cartaoId || undefined,
+        tipo: wiz.tipo,
+        valor: wiz.valor,
+        data: wiz.data,
+        categoria: wiz.categoria,
+        subcategoria: wiz.subcategoria || "\u2014",
+        nota: wiz.titulo,
+        recorrencia: wiz.parcelada ? "parcelada" : wiz.recorrente ? "fixa" : "unica",
+        classificacao: wiz.tipo === "despesa" ? wiz.classificacao : undefined,
+        pago: wiz.jaPago,
+    };
+    if (wiz.parcelada) {
+        const total = Math.max(2, Math.min(60, wiz.parcelas));
+        const dataBase = new Date(wiz.data);
+        for (let i = 0; i < total; i++) {
+            const d = new Date(dataBase);
+            d.setMonth(d.getMonth() + i);
+            estado.transacoes.push({ ...base, id: novoId(), data: d.toISOString().slice(0, 10), parcelaAtual: i + 1, parcelaTotal: total });
+        }
+    }
+    else {
+        estado.transacoes.push({ ...base, id: novoId() });
+    }
+    guardarEstado(estado);
+    fecharWizard();
+    renderizarTudo();
+}
+function confirmarTransferencia() {
+    var _a, _b;
+    const contaOrigem = estado.contas.find((c) => c.id === wiz.contaId);
+    const contaDestino = estado.contas.find((c) => c.id === wiz.contaDestinoId);
+    const nomeOrigem = (_a = contaOrigem === null || contaOrigem === void 0 ? void 0 : contaOrigem.nome) !== null && _a !== void 0 ? _a : "conta";
+    const nomeDestino = (_b = contaDestino === null || contaDestino === void 0 ? void 0 : contaDestino.nome) !== null && _b !== void 0 ? _b : "conta";
+    const notaBase = wiz.titulo || "Transferência";
+    estado.transacoes.push({
+        id: novoId(),
+        contaId: wiz.contaId,
+        tipo: "despesa",
+        valor: wiz.valor,
+        data: wiz.data,
+        categoria: "Transferências",
+        subcategoria: "Entre contas",
+        nota: `${notaBase} \u2192 ${nomeDestino}`,
+        recorrencia: "unica",
+        pago: true,
+    });
+    estado.transacoes.push({
+        id: novoId(),
+        contaId: wiz.contaDestinoId,
+        tipo: "receita",
+        valor: wiz.valor,
+        data: wiz.data,
+        categoria: "Transferências",
+        subcategoria: "Entre contas",
+        nota: `${notaBase} \u2190 ${nomeOrigem}`,
+        recorrencia: "unica",
+        pago: true,
+    });
+    guardarEstado(estado);
+    fecharWizard();
+    renderizarTudo();
+}
+/* ===================== Render geral ===================== */
+function renderizarTudo() {
+    const raiz = document.getElementById("app");
+    if (!raiz)
+        return;
+    limpar(raiz);
+    if (carregandoApp) {
+        raiz.className = "";
+        raiz.appendChild(el("div", { classe: "tela-carregar", texto: "A carregar..." }));
+        return;
+    }
+    if (supabaseConfigurado && !sessaoAtual) {
+        raiz.className = "";
+        renderAuth(raiz);
+        return;
+    }
+    raiz.classList.toggle("fundo-perfil", abaAtual === "perfil");
+    renderCabecalho(raiz);
+    const conteudo = el("main", { classe: "conteudo" });
+    switch (abaAtual) {
+        case "inicio":
+            renderInicio(conteudo);
+            break;
+        case "transacoes":
+            renderTransacoes(conteudo);
+            break;
+        case "relatorios":
+            renderRelatorios(conteudo);
+            break;
+        case "metas":
+            renderMetas(conteudo);
+            break;
+        case "perfil":
+            renderPerfil(conteudo);
+            break;
+    }
+    raiz.appendChild(conteudo);
+    if (abaAtual === "inicio" || abaAtual === "transacoes") {
+        const fab = el("button", { classe: "fab", texto: "+" });
+        fab.addEventListener("click", () => abrirFluxoTransacao());
+        raiz.appendChild(fab);
+    }
+    const nav = el("nav", { classe: "nav-abas" });
+    for (const aba of ABAS) {
+        const btn = el("button", { classe: aba.id === abaAtual ? "nav-btn ativo" : "nav-btn" });
+        btn.appendChild(iconeSvg(aba.icone));
+        btn.appendChild(el("span", { texto: aba.label }));
+        btn.addEventListener("click", () => mudarAba(aba.id));
+        nav.appendChild(btn);
+    }
+    raiz.appendChild(nav);
+}
+/* ===================== Autenticação (Supabase) ===================== */
+/* ===================== Autenticação por código (OTP por email) ===================== */
+/* ===================== Autenticação (email + palavra-passe) ===================== */
+function renderAuth(raiz) {
+    const wrap = el("div", { classe: "auth-wrap" });
+    wrap.appendChild(el("div", { classe: "auth-logo", texto: "Meu Bolso" }));
+    wrap.appendChild(el("div", { classe: "auth-slogan", texto: "Quem domina o seu bolso, cresce mais rápido." }));
+    wrap.appendChild(el("div", { classe: "auth-subtitulo", texto: telaAuth === "login" ? "Entra na tua conta" : "Cria a tua conta" }));
+    const form = el("form", { classe: "form" });
+    form.setAttribute("autocomplete", "on");
+    const inputNome = el("input", {
+        classe: "input",
+        attrs: { type: "text", placeholder: "Nome de utilizador", autocomplete: "name", maxlength: "40", name: "nome" },
+    });
+    if (telaAuth === "registo")
+        form.appendChild(inputNome);
+    const inputEmail = el("input", {
+        classe: "input",
+        attrs: { type: "email", placeholder: "Email", autocomplete: "email", required: "true", name: "email" },
+    });
+    form.appendChild(inputEmail);
+    const inputPass = el("input", {
+        classe: "input",
+        attrs: {
+            type: "password",
+            placeholder: "Palavra-passe",
+            autocomplete: telaAuth === "login" ? "current-password" : "new-password",
+            required: "true",
+            name: "password",
+            minlength: "6",
+        },
+    });
+    form.appendChild(inputPass);
+    if (erroAuth)
+        form.appendChild(el("div", { classe: "auth-erro", texto: erroAuth }));
+    const btnSubmit = el("button", { classe: "btn btn-primario", texto: telaAuth === "login" ? "Entrar" : "Criar conta", attrs: { type: "submit" } });
+    form.appendChild(btnSubmit);
+    form.addEventListener("submit", (ev) => {
+        ev.preventDefault();
+        if (telaAuth === "login")
+            fazerLogin(inputEmail.value, inputPass.value);
+        else
+            criarConta(inputEmail.value, inputPass.value, inputNome.value);
+    });
+    wrap.appendChild(form);
+    const btnTrocar = el("button", {
+        classe: "btn-link",
+        texto: telaAuth === "login" ? "Ainda não tens conta? Criar conta" : "Já tens conta? Entrar",
+    });
+    btnTrocar.addEventListener("click", () => { telaAuth = telaAuth === "login" ? "registo" : "login"; erroAuth = ""; renderizarTudo(); });
+    wrap.appendChild(btnTrocar);
+    raiz.appendChild(wrap);
+}
+async function criarConta(email, senha, nome) {
+    erroAuth = "";
+    const nomeLimpo = textoSeguro(nome, 40);
+    if (!email || senha.length < 6) {
+        erroAuth = "Indica um email válido e uma palavra-passe com pelo menos 6 caracteres.";
+        renderizarTudo();
+        return;
+    }
+    if (!nomeLimpo) {
+        erroAuth = "Indica um nome de utilizador.";
+        renderizarTudo();
+        return;
+    }
+    const { data, error } = await supa.auth.signUp({ email, password: senha, options: { data: { nome: nomeLimpo } } });
+    if (error) {
+        erroAuth = error.message;
+        renderizarTudo();
+        return;
+    }
+    if (data.user && data.session) {
+        await aoEntrarComSucesso(data.user.id, email, nomeLimpo);
+        return;
+    }
+    const tentativa = await supa.auth.signInWithPassword({ email, password: senha });
+    if (tentativa.error || !tentativa.data.user) {
+        erroAuth = "Conta criada, mas não foi possível entrar automaticamente. Toca em \"Entrar\" e tenta com o mesmo email e palavra-passe.";
+        telaAuth = "login";
+        renderizarTudo();
+        return;
+    }
+    await aoEntrarComSucesso(tentativa.data.user.id, email, nomeLimpo);
+}
+async function fazerLogin(email, senha) {
+    erroAuth = "";
+    if (!email || !senha) {
+        erroAuth = "Preenche o email e a palavra-passe.";
+        renderizarTudo();
+        return;
+    }
+    const { data, error } = await supa.auth.signInWithPassword({ email, password: senha });
+    if (error) {
+        erroAuth = error.message === "Invalid login credentials"
+            ? "Email ou palavra-passe incorretos."
+            : error.message;
+        renderizarTudo();
+        return;
+    }
+    await aoEntrarComSucesso(data.user.id, email);
+}
+async function aoEntrarComSucesso(userId, email, nomeNovo) {
+    sessaoAtual = { id: userId, email };
+    carregandoApp = true;
+    renderizarTudo();
+    await sincronizarDeSupabase(userId);
+    if (!estado.email)
+        estado.email = email;
+    if (nomeNovo && (!estado.nomeUsuario || estado.nomeUsuario === "Utilizador"))
+        estado.nomeUsuario = nomeNovo;
+    guardarEstado(estado);
+    subscreverRealtime(userId);
+    carregandoApp = false;
+    renderizarTudo();
+}
+async function terminarSessao() {
+    if (supa)
+        await supa.auth.signOut();
+    sessaoAtual = null;
+    telaAuth = "login";
+    estado = estadoPadrao();
+    renderizarTudo();
+}
+async function sincronizarDeSupabase(userId) {
+    var _a, _b;
+    const { data } = await supa.from("dados_app").select("*").eq("user_id", userId).maybeSingle();
+    if (data) {
+        const remoto = ((_a = data.estado) !== null && _a !== void 0 ? _a : {});
+        const base = estadoPadrao();
+        estado = {
+            ...base,
+            ...remoto,
+            plano: ["semanal", "quinzenal", "mensal"].includes(data.plano) ? data.plano : "gratuito",
+            planoExpiraEm: (_b = data.plano_expira_em) !== null && _b !== void 0 ? _b : null,
+        };
+    }
+    else {
+        await supa.from("dados_app").insert({ user_id: userId, plano: "gratuito", estado });
+    }
+    guardarEstado(estado);
+}
+function subscreverRealtime(userId) {
+    supa
+        .channel("dados_app_mudancas")
+        .on("postgres_changes", { event: "UPDATE", schema: "public", table: "dados_app", filter: `user_id=eq.${userId}` }, (payload) => {
+        var _a;
+        const linha = payload.new;
+        if (!linha)
+            return;
+        const planoValido = ["semanal", "quinzenal", "mensal"].includes(linha.plano) ? linha.plano : "gratuito";
+        if (planoValido !== estado.plano || linha.plano_expira_em !== estado.planoExpiraEm) {
+            estado.plano = planoValido;
+            estado.planoExpiraEm = (_a = linha.plano_expira_em) !== null && _a !== void 0 ? _a : null;
+            guardarEstado(estado);
+            renderizarTudo();
+        }
+    })
+        .subscribe();
+}
+async function iniciarSessaoApp() {
+    var _a;
+    estado = carregarEstado();
+    if (!supabaseConfigurado) {
+        carregandoApp = false;
+        renderizarTudo();
+        return;
+    }
+    const { data } = await supa.auth.getSession();
+    if (data.session) {
+        await aoEntrarComSucesso(data.session.user.id, (_a = data.session.user.email) !== null && _a !== void 0 ? _a : "");
+    }
+    else {
+        carregandoApp = false;
+        renderizarTudo();
+    }
+}
+document.addEventListener("DOMContentLoaded", () => {
+    iniciarSessaoApp();
+});
+
+</script>
+</body>
+</html>
